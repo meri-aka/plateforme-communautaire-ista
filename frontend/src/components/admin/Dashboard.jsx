@@ -88,9 +88,9 @@ export default function Dashboard() {
               <h3 className="text-lg font-extrabold text-[var(--text-primary)] leading-tight">{t('dashboard.charts.activity_title')}</h3>
               <p className="text-sm text-[var(--text-muted)] mt-1">{t('dashboard.charts.activity_desc')}</p>
             </div>
-            <div className="flex gap-2 bg-white/5 p-1 rounded-lg">
+            <div className="flex gap-2 p-1 rounded-lg" style={{ background: 'var(--bg-card-hover)' }}>
                <button className="bg-[var(--brand)] text-white px-3 py-1.5 rounded-md text-[11px] font-bold shadow-lg shadow-[var(--brand-glow)]">{t('dashboard.charts.live')}</button>
-               <button className="text-[var(--text-muted)] px-3 py-1.5 rounded-md text-[11px] font-bold hover:text-white transition-colors">{t('dashboard.charts.tfh')}</button>
+               <button className="text-[var(--text-muted)] px-3 py-1.5 rounded-md text-[11px] font-bold hover:text-[var(--text-primary)] transition-colors">{t('dashboard.charts.tfh')}</button>
             </div>
           </div>
           
@@ -106,7 +106,7 @@ export default function Dashboard() {
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
                 <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} dy={10} />
                 <YAxis stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} dx={-10} />
-                <Tooltip contentStyle={{ background: '#0a0f19', border: '1px solid var(--glass-border)', borderRadius: '12px', fontSize: '12px' }} />
+                <Tooltip contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '12px', fontSize: '12px', color: 'var(--text-primary)' }} />
                 <Area type="monotone" dataKey="users" stroke="var(--brand)" strokeWidth={3} fillOpacity={1} fill="url(#colorUsers)" />
               </AreaChart>
             </ResponsiveContainer>
@@ -138,22 +138,22 @@ export default function Dashboard() {
                 >
                   {activityByCluster.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
                 </Pie>
-                <Tooltip 
+<Tooltip 
                    cursor={{ fill: 'transparent' }}
-                   contentStyle={{ background: '#0a0f19', border: '1px solid var(--glass-border)', borderRadius: '12px', fontSize: '13px' }}
-                />
+                   contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '12px', fontSize: '13px', color: 'var(--text-primary)' }}
+                 />
               </PieChart>
             </ResponsiveContainer>
             
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
-              <p className="text-4xl font-black text-white leading-none tracking-tighter"><CountUpStat end="980" duration={1500} /></p>
+              <p className="text-4xl font-black leading-none tracking-tighter" style={{ color: 'var(--text-primary)' }}><CountUpStat end="980" duration={1500} /></p>
               <p className="text-[9px] font-black text-[var(--text-muted)] uppercase tracking-[0.2em] mt-2">{t('dashboard.charts.active_nodes')}</p>
             </div>
           </div>
 
           <div className="flex flex-col gap-3 mt-auto">
             {activityByCluster.map((item, i) => (
-              <div key={i} className="flex items-center gap-4 p-4 rounded-xl bg-white/[0.01] border border-white/[0.04] hover:bg-white/[0.03] transition-all">
+              <div key={i} className="flex items-center gap-4 p-4 rounded-xl transition-all" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border-subtle)' }}>
                 <div style={{ 
                   width: '36px', height: '36px', borderRadius: '10px', 
                   background: `${item.color}15`, border: `1px solid ${item.color}30`,
@@ -167,7 +167,7 @@ export default function Dashboard() {
                       <span style={{ fontSize: '9px', fontWeight: 900, color: item.color, background: `${item.color}15`, padding: '2px 6px', borderRadius: '4px' }}>{item.status}</span>
                    </div>
                    <div className="flex items-center gap-2">
-                      <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
+                      <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: 'var(--border-subtle)' }}>
                          <div style={{ width: `${(item.value/980)*100}%`, height: '100%', background: item.color }} />
                       </div>
                    </div>
@@ -190,7 +190,7 @@ export default function Dashboard() {
               { time: '11:58:10', event: t('dashboard.mock_logs.flagged'), module: 'MOD',  type: 'WARN' },
               { time: '11:45:03', event: t('dashboard.mock_logs.db_sync'), module: 'DB',   type: 'INFO' },
             ].map((ev, i) => (
-              <div key={i} className="flex items-center gap-5 p-3.5 rounded-lg hover:bg-white/[0.02] transition-colors min-w-[600px]">
+              <div key={i} className="flex items-center gap-5 p-3.5 rounded-lg transition-colors min-w-[600px]" style={{ background: 'var(--bg-card-hover)' }}>
                  <span className="text-xs font-bold text-[var(--text-muted)] font-mono">{ev.time}</span>
                  <span className={`text-[10px] font-black px-2 py-0.5 rounded-md w-12 text-center ${ev.type === 'WARN' ? 'text-amber-500 bg-amber-500/10' : 'text-[var(--brand)] bg-[var(--brand)]/10'}`}>{ev.module}</span>
                  <span className="text-sm text-[var(--text-secondary)] flex-1">{ev.event}</span>

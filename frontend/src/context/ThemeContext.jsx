@@ -18,18 +18,18 @@ const THEME_COLORS = {
     borderActive: 'rgba(255, 255, 255, 0.12)',
   },
   light: {
-    bgMain: '#EEF1F5',
+    bgMain: '#F3F4F6',
     bgCard: '#FFFFFF',
-    bgCardHover: '#F5F7FA',
+    bgCardHover: '#E5E7EB',
     bgElevated: '#FFFFFF',
-    textPrimary: '#1F2937',
-    textSecondary: '#4B5563',
-    textMuted: '#9CA3AF',
+    textPrimary: '#0F1117',
+    textSecondary: '#1F2937',
+    textMuted: '#4B5563',
     brand: '#4A7C23',
     brandDim: 'rgba(74, 124, 35, 0.12)',
     brandGlow: 'rgba(74, 124, 35, 0.15)',
-    borderSubtle: 'rgba(0, 0, 0, 0.06)',
-    borderActive: 'rgba(0, 0, 0, 0.12)',
+    borderSubtle: 'rgba(0, 0, 0, 0.08)',
+    borderActive: 'rgba(0, 0, 0, 0.16)',
   }
 };
 

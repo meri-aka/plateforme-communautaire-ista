@@ -61,7 +61,12 @@ export default function NotificationsPage() {
                 <button
                   key={key}
                   onClick={() => setFilter(key)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all flex-shrink-0 lg:flex-shrink-1 ${active ? 'bg-[var(--brand)] text-white shadow-lg shadow-[var(--brand-glow)]' : 'text-[var(--text-secondary)] hover:bg-white/5'}`}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all flex-shrink-0 lg:flex-shrink-1`}
+                  style={{ 
+                    background: active ? 'var(--brand)' : 'transparent', 
+                    color: active ? '#fff' : 'var(--text-secondary)',
+                    boxShadow: active ? '0 4px 12px var(--brand-glow)' : 'none'
+                  }}
                 >
                   <span>{label}</span>
                 </button>
@@ -80,7 +85,11 @@ export default function NotificationsPage() {
                 <button
                   key={r.id}
                   onClick={() => setRead(r.id)}
-                  className={`w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${readFilter === r.id ? 'bg-white/5 text-white' : 'text-[var(--text-muted)] hover:text-white'}`}
+                  className="w-full text-left px-4 py-2.5 rounded-xl text-xs font-bold transition-all"
+                  style={{ 
+                    background: readFilter === r.id ? 'var(--bg-card-hover)' : 'transparent', 
+                    color: readFilter === r.id ? 'var(--text-primary)' : 'var(--text-muted)'
+                  }}
                 >
                   {r.label}
                 </button>
@@ -93,7 +102,7 @@ export default function NotificationsPage() {
         <div className="flex-1 min-w-0 order-1 lg:order-2 w-full">
           <div className="pro-card overflow-hidden">
             <div className="p-5 sm:p-6 border-b border-[var(--glass-border)] flex items-center justify-between">
-              <h3 className="text-sm font-black text-white uppercase tracking-widest">
+              <h3 className="text-sm font-black uppercase tracking-widest" style={{ color: 'var(--text-primary)' }}>
                 {CAT_LABELS[filter]} <span className="text-[var(--text-muted)] ml-2">({filtered.length})</span>
               </h3>
             </div>
@@ -102,7 +111,7 @@ export default function NotificationsPage() {
               {filtered.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-32 px-10">
                   <BellOff size={48} className="text-[var(--text-muted)] opacity-20 mb-6" />
-                  <p className="text-lg font-black text-white mb-2">{t('notifications.empty.title')}</p>
+                  <p className="text-lg font-black mb-2" style={{ color: 'var(--text-primary)' }}>{t('notifications.empty.title')}</p>
                   <p className="text-sm text-[var(--text-muted)] text-center">{t('notifications.empty.desc')}</p>
                 </div>
               ) : (
@@ -110,27 +119,29 @@ export default function NotificationsPage() {
                   <div 
                     key={n.id}
                     onClick={() => markRead(n.id)}
-                    className={`p-6 flex gap-6 items-start transition-colors cursor-pointer ${!n.read ? 'bg-[var(--brand)]/[0.03]' : 'hover:bg-white/[0.01]'}`}
+                    className="p-6 flex gap-6 items-start transition-colors cursor-pointer"
+                    style={{ background: !n.read ? 'var(--brand-dim)' : 'transparent' }}
                   >
                     <div className="relative flex-shrink-0">
-                      <div className="w-11 h-11 rounded-xl flex items-center justify-center border border-[var(--glass-border)]" style={{ background: `${n.color}15`, color: n.color }}>
+                      <div className="w-11 h-11 rounded-xl flex items-center justify-center border" style={{ background: `${n.color}15`, color: n.color, borderColor: 'var(--border-subtle)' }}>
                         <n.icon size={20} />
                       </div>
-                      {!n.read && <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[var(--brand)] border-2 border-[var(--bg-main)] shadow-[0_0_10px_var(--brand)]" />}
+                      {!n.read && <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[var(--brand)] border-2 shadow-[0_0_10px_var(--brand)]" style={{ borderColor: 'var(--bg-main)' }} />}
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start mb-1">
-                        <p className={`text-sm font-bold ${!n.read ? 'text-white' : 'text-[var(--text-secondary)]'}`}>{n.title}</p>
+                        <p className="text-sm font-bold" style={{ color: !n.read ? 'var(--text-primary)' : 'var(--text-secondary)' }}>{n.title}</p>
                         <span className="text-[10px] text-[var(--text-muted)] font-bold">{n.time}</span>
                       </div>
                       <p className="text-xs text-[var(--text-muted)] leading-relaxed mb-4">{n.body}</p>
                       
                       <div className="flex gap-2">
-                        <button className="px-3 py-1.5 rounded-lg bg-white/5 text-[10px] font-black uppercase text-[var(--text-secondary)] hover:bg-white/10 transition-colors">{t('common.details')}</button>
+                        <button className="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-colors" style={{ background: 'var(--bg-card-hover)', color: 'var(--text-secondary)' }}>{t('common.details')}</button>
                         <button 
                           onClick={e => { e.stopPropagation(); dismiss(n.id); }}
-                          className="px-3 py-1.5 rounded-lg bg-white/5 text-[10px] font-black uppercase text-rose-500 hover:bg-rose-500/10 transition-colors"
+                          className="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase transition-colors"
+                          style={{ background: 'var(--bg-card-hover)', color: '#F43F5E' }}
                         >
                           <Trash2 size={12} />
                         </button>

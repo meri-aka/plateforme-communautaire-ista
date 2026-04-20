@@ -121,12 +121,6 @@ export default function Navbar({ title, subtitle, actions = [], onMenuClick, onC
                     color: '#fff',
                     boxShadow: '0 4px 12px var(--brand-glow)',
                   }
-: {
-                    background: 'var(--brand)',
-                    border: '1px solid var(--brand)',
-                    color: '#fff',
-                    boxShadow: '0 4px 12px var(--brand-glow)',
-                  }
                 : {
                     background: 'var(--bg-card-hover)', 
                     border: `1px solid ${T.border}`,

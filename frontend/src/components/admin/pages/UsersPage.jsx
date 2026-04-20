@@ -103,7 +103,7 @@ export default function UsersPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-white/5">
+              <tr style={{ background: 'var(--bg-card-hover)' }}>
                 <th className="p-5 font-black text-[10px] text-[var(--text-muted)] uppercase tracking-widest">{t('users.table.header_details')}</th>
                 <th className="p-5 font-black text-[10px] text-[var(--text-muted)] uppercase tracking-widest hidden md:table-cell">{t('users.table.header_access')}</th>
                 <th className="p-5 font-black text-[10px] text-[var(--text-muted)] uppercase tracking-widest">{t('users.table.header_status')}</th>
@@ -115,10 +115,10 @@ export default function UsersPage() {
                 const ST = STATUS_MAP[u.status];
                 const RL = ROLE_MAP[u.role];
                 return (
-                  <tr key={u.id} className="border-b border-[var(--glass-border)] hover:bg-white/[0.01] transition-colors">
+                  <tr key={u.id} className="border-b transition-colors" style={{ borderColor: 'var(--border-subtle)' }}>
                     <td className="p-5">
                       <div className="flex items-center gap-3">
-                        <img src={u.avatar} className="w-10 h-10 rounded-xl border border-[var(--glass-border)]" alt="" />
+                        <img src={u.avatar} className="w-10 h-10 rounded-xl border" alt="" style={{ borderColor: 'var(--border-subtle)' }} />
                         <div>
                           <p className="text-sm font-bold text-[var(--text-primary)]">{u.name}</p>
                           <p className="text-xs text-[var(--text-muted)]">{u.email}</p>
@@ -129,15 +129,15 @@ export default function UsersPage() {
                       <span className="text-[10px] font-black px-2 py-1 rounded-md uppercase" style={{ color: RL.color, background: RL.bg }}>{RL.label}</span>
                     </td>
                     <td className="p-5">
-                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/5 bg-white/5">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border" style={{ borderColor: 'var(--border-subtle)', background: 'var(--bg-card-hover)' }}>
                         <span className="w-1.5 h-1.5 rounded-full" style={{ background: ST.color }} />
                         <span className="text-[11px] font-bold" style={{ color: ST.color }}>{ST.label}</span>
                       </div>
                     </td>
                     <td className="p-5 text-right">
                       <div className="flex justify-end gap-2">
-                         <button className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[var(--text-secondary)]"><Eye size={14} /></button>
-                         <button className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[var(--text-secondary)]"><MoreVertical size={14} /></button>
+                         <button className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-secondary)]" style={{ background: 'var(--bg-card-hover)' }}><Eye size={14} /></button>
+                         <button className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-secondary)]" style={{ background: 'var(--bg-card-hover)' }}><MoreVertical size={14} /></button>
                       </div>
                     </td>
                   </tr>

@@ -6,14 +6,12 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import AdminLayout from '../layout/AdminLayout';
+import { useTheme } from '../../../context/ThemeContext';
 
-function SettingsSection({ title, Icon, children }) {
+function SettingsSection({ title, children }) {
   return (
     <div className="pro-card mb-6 overflow-hidden animate-slide-up">
       <div className="p-5 sm:p-6 border-b border-[var(--glass-border)] flex items-center gap-3">
-        <div className="w-9 h-9 rounded-xl bg-[var(--brand)]/10 flex items-center justify-center text-[var(--brand)]">
-          <Icon size={18} />
-        </div>
         <h3 className="text-base font-bold text-[var(--text-primary)]">{title}</h3>
       </div>
       <div className="p-6">{children}</div>
@@ -31,9 +29,10 @@ function ToggleItem({ label, desc, defaultOn = false }) {
       </div>
       <button 
         onClick={() => setOn(!on)}
-        className={`w-11 h-6 rounded-full relative transition-all duration-300 ${on ? 'bg-[var(--brand)]' : 'bg-white/5'}`}
-      >
-        <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all duration-300 shadow-md ${on ? 'left-6' : 'left-1'}`} />
+className={`w-11 h-6 rounded-full relative transition-all duration-300 ${on ? 'bg-[var(--brand)]' : ''}`}
+        style={{ background: on ? 'var(--brand)' : (theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)') }}
+        >
+          <div className={`absolute top-1 w-4 h-4 rounded-full transition-all duration-300 shadow-md ${on ? 'left-6' : 'left-1'}`} style={{ background: theme === 'dark' ? '#fff' : '#fff' }} />
       </button>
     </div>
   );
@@ -47,7 +46,8 @@ function InputRow({ label, defaultValue, type = 'text', placeholder }) {
         type={type} 
         defaultValue={defaultValue} 
         placeholder={placeholder}
-        className="pro-glass w-full px-4 py-3 rounded-xl text-sm text-white outline-none border border-[var(--glass-border)] focus:border-[var(--brand)] transition-colors"
+        className="pro-glass w-full px-4 py-3 rounded-xl text-sm outline-none border transition-colors"
+        style={{ color: 'var(--text-primary)', borderColor: 'var(--border-subtle)', background: 'var(--bg-card-hover)' }}
       />
     </div>
   );
@@ -55,6 +55,7 @@ function InputRow({ label, defaultValue, type = 'text', placeholder }) {
 
 export default function SettingsPage() {
   const { t } = useTranslation();
+  const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState('Core');
   const [isSaving, setIsSaving] = useState(false);
 
@@ -93,7 +94,12 @@ export default function SettingsPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all flex-shrink-0 lg:flex-shrink-1 transition-all ${activeTab === tab.id ? 'bg-[var(--brand)] text-white shadow-lg shadow-[var(--brand-glow)]' : 'text-[var(--text-secondary)] hover:bg-white/5'}`}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all flex-shrink-0 lg:flex-shrink-1 transition-all ${activeTab === tab.id ? 'bg-[var(--brand)] text-white shadow-lg shadow-[var(--brand-glow)]' : ''}`}
+              style={{ 
+                background: activeTab === tab.id ? 'var(--brand)' : 'transparent', 
+                color: activeTab === tab.id ? '#fff' : 'var(--text-secondary)',
+                border: theme === 'dark' ? 'none' : '1px solid var(--border-subtle)'
+              }}
               >
                 <tab.Icon size={18} />
                 <span>{tab.label}</span>
@@ -102,8 +108,8 @@ export default function SettingsPage() {
             ))}
           </div>
 
-          <div className="pro-card mt-6 p-5 bg-[var(--brand)]/5 border-[var(--brand)]/20 hidden lg:block">
-            <p className="text-xs font-black text-white uppercase tracking-widest mb-3">{t('common.status_ready') || 'Node Status'}</p>
+          <div className="pro-card mt-6 p-5 hidden lg:block" style={{ background: 'var(--brand-dim)', borderColor: 'var(--brand-dim)' }}>
+            <p className="text-xs font-black uppercase tracking-widest mb-3" style={{ color: 'var(--text-primary)' }}>{t('common.status_ready') || 'Node Status'}</p>
             <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]" />
               Operational v4.2.0

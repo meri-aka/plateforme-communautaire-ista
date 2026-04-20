@@ -1,19 +1,22 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, ChevronDown, Sparkles, Users, Target, Bell } from 'lucide-react';
+import { ArrowRight, ChevronDown, Sparkles, Users, Target, Bell, Sun, Moon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../context/ThemeContext';
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const [showContent, setShowContent] = useState(false);
-  const { t } = useTranslation();
-  const { theme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const timer = setTimeout(() => setShowContent(true), 300);
     return () => clearTimeout(timer);
   }, []);
+
+  const handleToggleTheme = () => {
+    toggleTheme();
+  };
 
   const features = [
     { icon: Target, title: 'Lost & Found', desc: 'Quickly report and find lost items on campus' },
@@ -37,6 +40,36 @@ export default function LandingPage() {
         backgroundImage: 'linear-gradient(rgba(123, 179, 66, 0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(123, 179, 66, 0.3) 1px, transparent 1px)',
         backgroundSize: '60px 60px'
       }} />
+
+      {/* Theme Toggle Button */}
+      <button
+        onClick={handleToggleTheme}
+        style={{
+          position: 'absolute',
+          top: '24px',
+          right: '24px',
+          zIndex: 50,
+          width: '48px',
+          height: '48px',
+          borderRadius: '14px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          background: theme === 'dark' ? 'rgba(123, 179, 66, 0.15)' : 'rgba(74, 124, 35, 0.1)',
+          border: `1px solid ${theme === 'dark' ? 'rgba(123, 179, 66, 0.3)' : 'rgba(74, 124, 35, 0.3)'}`,
+          color: 'var(--brand)',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          boxShadow: theme === 'dark' ? '0 0 20px rgba(123, 179, 66, 0.15)' : '0 4px 12px rgba(74, 124, 35, 0.15)',
+        }}
+        title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+      >
+        {theme === 'dark' ? (
+          <Sun size={20} className="text-[#7BB342] drop-shadow-[0_0_8px_rgba(123,179,66,0.8)]" />
+        ) : (
+          <Moon size={20} className="text-[#4A7C23] drop-shadow-[0_0_8px_rgba(74,124,35,0.8)]" />
+        )}
+      </button>
 
       {/* Main Content */}
       <div 

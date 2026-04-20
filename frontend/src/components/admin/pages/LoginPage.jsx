@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../../context/ThemeContext';
-import { Lock, Mail, AlertCircle, ArrowRight, Loader2, KeyRound, Globe, Zap, Cpu } from 'lucide-react';
+import { Lock, Mail, AlertCircle, ArrowRight, Loader2, KeyRound, Globe, Zap, Cpu, Sun, Moon } from 'lucide-react';
 import bgImage from '../../../assets/login-bg-pro.png';
+import bgImageLight from '../../../assets/login-bg-prolight.png';
 import BrandLogo from '../common/BrandLogo';
 
 export default function LoginPage() {
@@ -16,13 +17,17 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [initSequence, setInitSequence] = useState(0);
 
-  const { theme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const toggleLanguage = () => {
     const nextLang = i18n.language === 'en' ? 'fr' : 'en';
     i18n.changeLanguage(nextLang);
+  };
+
+  const handleToggleTheme = () => {
+    toggleTheme();
   };
 
   useEffect(() => {
@@ -53,6 +58,30 @@ export default function LoginPage() {
     }, 1200);
   };
 
+  const ThemeToggle = () => (
+    <button
+      onClick={handleToggleTheme}
+      className="transition-all hover:scale-105 active:scale-95"
+      style={{
+        position: 'absolute', top: '32px', right: theme === 'dark' ? '140px' : '140px', zIndex: 100,
+        width: '44px', height: '44px',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        borderRadius: '12px', cursor: 'pointer',
+        background: theme === 'dark' ? 'rgba(123, 179, 66, 0.15)' : 'rgba(74, 124, 35, 0.1)',
+        border: `1px solid ${theme === 'dark' ? 'rgba(123, 179, 66, 0.3)' : 'rgba(74, 124, 35, 0.3)'}`,
+        color: 'var(--brand)',
+        boxShadow: theme === 'dark' ? '0 0 20px rgba(123, 179, 66, 0.15)' : '0 4px 12px rgba(74, 124, 35, 0.15)',
+      }}
+      title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+    >
+      {theme === 'dark' ? (
+        <Sun size={20} className="text-[#7BB342] drop-shadow-[0_0_8px_rgba(123,179,66,0.8)]" />
+      ) : (
+        <Moon size={20} className="text-[#4A7C23] drop-shadow-[0_0_8px_rgba(74,124,35,0.8)]" />
+      )}
+    </button>
+  );
+
   const LanguageToggle = () => (
     <button
       onClick={toggleLanguage}
@@ -61,7 +90,7 @@ export default function LoginPage() {
         position: 'absolute', top: '32px', right: '32px', zIndex: 100,
         display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 20px',
         borderRadius: '16px', border: '1px solid var(--glass-border)',
-        color: 'white', fontWeight: 800, fontSize: '13px', cursor: 'pointer',
+        color: theme === 'dark' ? '#fff' : '#1F2937', fontWeight: 800, fontSize: '13px', cursor: 'pointer',
         background: theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'
       }}
     >
@@ -71,14 +100,17 @@ export default function LoginPage() {
   );
 
   if (!showForm) {
+    const currentBg = theme === 'dark' ? bgImage : bgImageLight;
+    const overlayColor = theme === 'dark' ? 'rgba(4,6,14,0.3), rgba(4,6,14,0.9)' : 'rgba(255,255,255,0.1), rgba(255,255,255,0.85)';
     return (
       <div style={{
         minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: `linear-gradient(rgba(4,6,14,0.3), rgba(4,6,14,0.9)), url(${bgImage})`,
+        background: `linear-gradient(${overlayColor}), url(${currentBg})`,
         backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative',
         overflow: 'hidden'
       }}>
         <div className="mesh-bg" />
+        <ThemeToggle />
         <LanguageToggle />
         
         {/* ── PERSISTENT GLOBAL HEADER ── */}
@@ -130,8 +162,10 @@ export default function LoginPage() {
     );
   }
 
+  const visualBg = theme === 'dark' ? bgImage : bgImageLight;
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-main)', display: 'flex', overflow: 'hidden' }}>
+      <ThemeToggle />
       <LanguageToggle />
       <style>{`
         @keyframes scanline { from { background-position: 0 0; } to { background-position: 0 100%; } }
@@ -139,16 +173,16 @@ export default function LoginPage() {
       `}</style>
       
       {/* Visual Side */}
-      <div className="animate-fade-in hidden lg:flex flex-[1.5] relative items-end p-24 overflow-hidden" style={{ background: `url(${bgImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(4,6,14,0.1) 0%, rgba(4,6,14,0.95) 100%)' }} />
-         <div className="mesh-bg absolute inset-0" />
-         <div style={{ position: 'relative', maxWidth: '600px' }}>
-            <h2 style={{ fontSize: '64px', fontStyle: 'italic', fontWeight: 900, color: theme === 'dark' ? '#fff' : '#1F2937', margin: '0 0 24px', lineHeight: 1, letterSpacing: '-4px' }}>
-              {t('login.sidebar_title')}
-            </h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '18px', lineHeight: 1.6 }}>{t('login.sidebar_desc')}</p>
-         </div>
-      </div>
+<div className="animate-fade-in hidden lg:flex flex-[1.5] relative items-end p-24 overflow-hidden" style={{ background: `url(${visualBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+          <div style={{ position: 'absolute', inset: 0, background: theme === 'dark' ? 'linear-gradient(135deg, rgba(4,6,14,0.1) 0%, rgba(4,6,14,0.95) 100%)' : 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.85) 100%)' }} />
+          <div className="mesh-bg absolute inset-0" />
+          <div style={{ position: 'relative', maxWidth: '600px' }}>
+             <h2 style={{ fontSize: '64px', fontStyle: 'italic', fontWeight: 900, color: theme === 'dark' ? '#fff' : '#1F2937', margin: '0 0 24px', lineHeight: 1, letterSpacing: '-4px' }}>
+               {t('login.sidebar_title')}
+             </h2>
+             <p style={{ color: 'var(--text-secondary)', fontSize: '18px', lineHeight: 1.6 }}>{t('login.sidebar_desc')}</p>
+          </div>
+       </div>
 
       {/* Form Side */}
       <div className="flex-1 flex items-center justify-center p-8 sm:p-24 bg-[var(--bg-main)] relative z-10 border-l border-[var(--glass-border)] shadow-2xl">

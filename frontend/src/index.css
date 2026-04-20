@@ -22,20 +22,20 @@
 }
 
 [data-theme="light"] {
-  --bg-main: #E8ECF1;
+  --bg-main: #F3F4F6;
   --bg-card: #FFFFFF;
-  --bg-card-hover: #F2F4F7;
-  --bg-elevated: #F2F4F7;
-  --text-primary: #1F2937;
-  --text-secondary: #4B5563;
-  --text-muted: #9CA3AF;
+  --bg-card-hover: #E5E7EB;
+  --bg-elevated: #FFFFFF;
+  --text-primary: #0F1117;
+  --text-secondary: #1F2937;
+  --text-muted: #4B5563;
   --brand: #4A7C23;
   --brand-dim: rgba(74, 124, 35, 0.12);
   --brand-glow: rgba(74, 124, 35, 0.15);
-  --border-subtle: rgba(0, 0, 0, 0.06);
-  --border-active: rgba(0, 0, 0, 0.12);
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-active: rgba(0, 0, 0, 0.16);
   --glass-bg: rgba(255, 255, 255, 0.95);
-  --glass-border: rgba(0, 0, 0, 0.06);
+  --glass-border: rgba(0, 0, 0, 0.08);
 }
 
 @layer base {
@@ -71,4 +71,14 @@
   .avatar-img { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; }
   .avatar-lg { width: 52px; height: 52px; border-radius: 12px; object-fit: cover; }
   .feedback-img { width: 100%; height: 160px; object-fit: cover; }
+  .mesh-bg {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 25% 25%, var(--brand-dim) 0%, transparent 50%),
+                     radial-gradient(circle at 75% 75%, var(--brand-glow) 0%, transparent 50%);
+    opacity: 0.6;
+  }
+  [data-theme="light"] .mesh-bg {
+    opacity: 0.3;
+  }
 }
