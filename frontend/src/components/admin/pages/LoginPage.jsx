@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from '../../../context/ThemeContext';
 import { Lock, Mail, AlertCircle, ArrowRight, Loader2, KeyRound, Globe, Zap, Cpu } from 'lucide-react';
 import bgImage from '../../../assets/login-bg-pro.png';
 import BrandLogo from '../common/BrandLogo';
@@ -15,6 +16,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [initSequence, setInitSequence] = useState(0);
 
+  const { theme } = useTheme();
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -60,7 +62,7 @@ export default function LoginPage() {
         display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 20px',
         borderRadius: '16px', border: '1px solid var(--glass-border)',
         color: 'white', fontWeight: 800, fontSize: '13px', cursor: 'pointer',
-        background: 'rgba(255,255,255,0.05)'
+        background: theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'
       }}
     >
       <Globe size={18} color="var(--brand)" />
@@ -83,7 +85,7 @@ export default function LoginPage() {
         <div className="animate-fade-in" style={{ position: 'absolute', top: '32px', left: '32px', display: 'flex', alignItems: 'center', gap: '16px', zIndex: 100 }}>
           <BrandLogo size={42} />
           <div>
-            <h2 style={{ fontSize: '18px', fontWeight: 900, color: '#fff', letterSpacing: '-0.5px', margin: 0, lineHeight: 1.1 }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 900, color: theme === 'dark' ? '#fff' : '#1F2937', letterSpacing: '-0.5px', margin: 0, lineHeight: 1.1 }}>
               ISTA<span style={{ color: 'var(--brand)' }}>Connect</span>
             </h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
@@ -106,7 +108,7 @@ export default function LoginPage() {
           </div>
 
           <p style={{ fontSize: '11px', fontWeight: 900, color: 'var(--brand)', textTransform: 'uppercase', letterSpacing: '0.6em', marginBottom: '20px' }}>{t('login.node_access')}</p>
-          <h1 style={{ fontSize: '92px', fontWeight: 900, color: '#fff', letterSpacing: '-5px', margin: '0 0 28px', lineHeight: 0.85 }}>ISTA<span style={{ color: 'var(--brand)' }}>Connect</span></h1>
+          <h1 style={{ fontSize: '92px', fontWeight: 900, color: theme === 'dark' ? '#fff' : '#1F2937', letterSpacing: '-5px', margin: '0 0 28px', lineHeight: 0.85 }}>ISTA<span style={{ color: 'var(--brand)' }}>Connect</span></h1>
           <p style={{ fontSize: '22px', color: 'var(--text-secondary)', margin: '0 0 64px', lineHeight: 1.5, fontWeight: 400, maxWidth: '680px', marginInline: 'auto' }}>
             {t('login.hero_title')} <br/> {t('login.hero_subtitle')}
           </p>
@@ -116,7 +118,7 @@ export default function LoginPage() {
             className="pro-glass transition-all hover:scale-105 active:scale-95"
             style={{
               padding: '24px 72px', borderRadius: '24px', fontSize: '20px', fontWeight: 900,
-              color: '#fff', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '20px',
+              color: theme === 'dark' ? '#fff' : '#1F2937', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '20px',
               border: '1px solid var(--brand)', background: 'rgba(123, 179, 66, 0.1)',
               boxShadow: '0 25px 60px -15px var(--brand-glow)'
             }}
@@ -141,7 +143,7 @@ export default function LoginPage() {
          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(4,6,14,0.1) 0%, rgba(4,6,14,0.95) 100%)' }} />
          <div className="mesh-bg absolute inset-0" />
          <div style={{ position: 'relative', maxWidth: '600px' }}>
-            <h2 style={{ fontSize: '64px', fontStyle: 'italic', fontWeight: 900, color: '#fff', margin: '0 0 24px', lineHeight: 1, letterSpacing: '-4px' }}>
+            <h2 style={{ fontSize: '64px', fontStyle: 'italic', fontWeight: 900, color: theme === 'dark' ? '#fff' : '#1F2937', margin: '0 0 24px', lineHeight: 1, letterSpacing: '-4px' }}>
               {t('login.sidebar_title')}
             </h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '18px', lineHeight: 1.6 }}>{t('login.sidebar_desc')}</p>
@@ -149,18 +151,18 @@ export default function LoginPage() {
       </div>
 
       {/* Form Side */}
-      <div className="flex-1 flex items-center justify-center p-8 sm:p-24 bg-[#030508] relative z-10 border-l border-[var(--glass-border)] shadow-2xl">
+      <div className="flex-1 flex items-center justify-center p-8 sm:p-24 bg-[var(--bg-main)] relative z-10 border-l border-[var(--glass-border)] shadow-2xl">
         <div style={{ width: '100%', maxWidth: '440px' }}>
           <button 
              onClick={() => setShowForm(false)}
-             className="text-[var(--text-muted)] hover:text-[var(--brand)] transition-colors inline-flex items-center gap-2 font-bold mb-16"
+             className="hover:text-[var(--brand)] transition-colors inline-flex items-center gap-2 font-bold mb-16"
           >
             <ArrowRight size={20} className="rotate-180" /> {t('login.return_node').toUpperCase()}
           </button>
 
           <div className="mb-14" style={{ opacity: initSequence >= 1 ? 1 : 0, transition: 'all 0.8s' }}>
             <span className="text-[10px] font-black tracking-widest text-[var(--brand)] px-3 py-1.5 rounded-lg bg-[var(--brand)]/10 border border-[var(--brand)]/20 uppercase mb-4 inline-block">Security Layer-G1</span>
-            <h2 className="text-5xl font-black text-white mb-4 tracking-tighter">{t('login.authorize')}</h2>
+            <h2 className="text-5xl font-black text-[var(--text-primary)] mb-4 tracking-tighter">{t('login.authorize')}</h2>
             <div className="flex items-center gap-3">
                <div className="w-2 h-2 rounded-full bg-[var(--brand)] shadow-[0_0_10px_var(--brand)]" />
                <p className="text-lg text-[var(--text-secondary)] font-medium">{t('login.handshake')}</p>
@@ -176,25 +178,27 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-8" style={{ opacity: initSequence >= 2 ? 1 : 0, transition: 'all 0.8s' }}>
             <div className="relative">
-              <label className="absolute -top-3 left-4 bg-[#030508] px-2 text-[10px] font-black text-[var(--brand)] uppercase tracking-widest z-1">{t('login.alias')}</label>
+              <label className="absolute -top-3 left-4 bg-[var(--bg-main)] px-2 text-[10px] font-black text-[var(--brand)] uppercase tracking-widest z-1">{t('login.alias')}</label>
               <div className="relative">
                 <Mail size={20} className="absolute left-5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
                 <input
                   type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@ista.connect" required
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 pl-14 pr-6 text-white outline-none focus:border-[var(--brand)] transition-all"
+                  className="w-full rounded-2xl py-5 pl-14 pr-6 outline-none transition-all"
+                  style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border-subtle)', color: 'var(--text-primary)' }}
                 />
               </div>
             </div>
 
             <div className="relative">
-              <label className="absolute -top-3 left-4 bg-[#030508] px-2 text-[10px] font-black text-[var(--brand)] uppercase tracking-widest z-1">{t('login.passkey')}</label>
+              <label className="absolute -top-3 left-4 bg-[var(--bg-main)] px-2 text-[10px] font-black text-[var(--brand)] uppercase tracking-widest z-1">{t('login.passkey')}</label>
               <div className="relative">
                 <KeyRound size={20} className="absolute left-5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
                 <input
                   type="password" value={password} onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••" required
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 pl-14 pr-6 text-white outline-none focus:border-[var(--brand)] transition-all"
+                  className="w-full rounded-2xl py-5 pl-14 pr-6 outline-none transition-all"
+                  style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border-subtle)', color: 'var(--text-primary)' }}
                 />
               </div>
             </div>

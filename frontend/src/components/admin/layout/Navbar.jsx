@@ -6,7 +6,7 @@ const T = {
   text1: 'var(--text-primary)',
   text2: 'var(--text-secondary)',
   text3: 'var(--text-muted)',
-  border: 'var(--glass-border)',
+  border: 'var(--border-subtle)',
   brand: 'var(--brand)',
 };
 
@@ -21,16 +21,15 @@ export default function Navbar({ title, subtitle, actions = [], onMenuClick, onC
 
   return (
     <header className="pro-glass" style={{
-      position: 'sticky', top: 0, zIndex: 40, height: '70px',
+      position: 'sticky', top: 0, zIndex: 40, height: '60px',
       display: 'flex', alignItems: 'center', padding: '0 16px', gap: '12px',
-      borderBottom: `1px solid ${T.border}`,
     }}>
       
       {/* ── Mobile Menu Toggle ── */}
       <button 
         onClick={onMenuClick}
-        className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl hover:bg-white/5 text-[var(--text-secondary)] transition-all"
-        style={{ border: '1px solid var(--glass-border)' }}
+        className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl text-[var(--text-secondary)] transition-all"
+        style={{ border: '1px solid var(--border-subtle)', background: 'var(--bg-card-hover)' }}
       >
         <Menu size={20} />
       </button>
@@ -38,8 +37,8 @@ export default function Navbar({ title, subtitle, actions = [], onMenuClick, onC
       {/* ── Desktop Collapse Toggle ── */}
       <button 
         onClick={onCollapseToggle}
-        className="hidden lg:flex items-center justify-center w-10 h-10 rounded-xl hover:bg-white/5 text-[var(--text-secondary)] transition-all"
-        style={{ border: '1px solid var(--glass-border)' }}
+        className="hidden lg:flex items-center justify-center w-10 h-10 rounded-xl text-[var(--text-secondary)] transition-all"
+        style={{ border: '1px solid var(--border-subtle)', background: 'var(--bg-card-hover)' }}
         title={isCollapsed ? t('nav.expand') : t('nav.collapse')}
       >
         {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
@@ -60,7 +59,7 @@ export default function Navbar({ title, subtitle, actions = [], onMenuClick, onC
       {/* ── Search Bar ── */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: '10px',
-        background: 'rgba(255, 255, 255, 0.03)', border: `1px solid ${T.border}`,
+        background: 'var(--bg-card-hover)', border: `1px solid ${T.border}`,
         padding: '8px 16px', borderRadius: '12px', flex: 1, maxWidth: '240px',
         transition: 'all 0.2s',
       }} className="hidden xl:flex">
@@ -84,7 +83,7 @@ export default function Navbar({ title, subtitle, actions = [], onMenuClick, onC
             padding: '8px 12px', borderRadius: '10px',
             fontSize: '12px', fontWeight: 800, color: T.text2,
             border: `1px solid ${T.border}`, cursor: 'pointer',
-            background: 'rgba(255,255,255,0.02)'
+            background: 'var(--bg-card-hover)'
           }}
         >
           <Globe size={16} color="var(--brand)" />
@@ -122,8 +121,14 @@ export default function Navbar({ title, subtitle, actions = [], onMenuClick, onC
                     color: '#fff',
                     boxShadow: '0 4px 12px var(--brand-glow)',
                   }
+: {
+                    background: 'var(--brand)',
+                    border: '1px solid var(--brand)',
+                    color: '#fff',
+                    boxShadow: '0 4px 12px var(--brand-glow)',
+                  }
                 : {
-                    background: 'rgba(255, 255, 255, 0.03)', 
+                    background: 'var(--bg-card-hover)', 
                     border: `1px solid ${T.border}`,
                     color: T.text2,
                   }),
@@ -138,7 +143,7 @@ export default function Navbar({ title, subtitle, actions = [], onMenuClick, onC
         <button
           style={{
             position: 'relative', width: '40px', height: '40px', borderRadius: '12px',
-            background: 'rgba(255, 255, 255, 0.03)', border: `1px solid ${T.border}`,
+            background: 'var(--bg-card-hover)', border: `1px solid ${T.border}`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             cursor: 'pointer', transition: 'all 0.2s', color: T.text2
           }}

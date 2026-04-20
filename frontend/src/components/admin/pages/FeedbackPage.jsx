@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { 
   Search as SearchIcon, Download, Check, MessageSquare, AlertCircle, 
-  Star, Reply, Send, Bug, Lightbulb, BookOpen, Filter, 
-  Clock, ChevronLeft, ChevronRight, MoreVertical, ThumbsUp, ThumbsDown
+  Star, Reply, Clock, MoreVertical, ThumbsUp, ThumbsDown
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import AdminLayout from '../layout/AdminLayout';
@@ -23,13 +22,13 @@ export default function FeedbackPage() {
     { id: 4, author: 'Lina B.',    avatar: 'https://i.pravatar.cc/150?img=23&retina=1&d=mm', module: 'API Gateway',       rating: 1, status: 'in-progress', date: 'Jan 17, 2025',  category: t('feedback.categories.bug'), comment: t('feedback.mock.c2'), image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=90&fm=webp' },
   ];
 
-  const [search, setSearch]       = useState('');
-  const [expanded, setExpanded]   = useState(null);
+  const [search, setSearch] = useState('');
+  const [expanded, setExpanded] = useState(null);
 
   const STATUS_MAP = {
-    open:        { label: t('feedback.status.open') || 'Open',        color: '#F43F5E', bg: 'rgba(244,63,94,0.1)' },
-    resolved:    { label: t('feedback.status.resolved') || 'Resolved',    color: '#10B981', bg: 'rgba(16,185,129,0.1)' },
-    'in-progress': { label: t('feedback.status.processing') || 'Processing', color: '#F59E0B', bg: 'rgba(245,158,11,0.1)' },
+    open:        { label: t('feedback.status.open') || 'Open',        color: 'var(--accent-rose)', bg: 'rgba(244,63,94,0.1)' },
+    resolved:    { label: t('feedback.status.resolved') || 'Resolved',    color: 'var(--accent-green)', bg: 'rgba(34,197,94,0.1)' },
+    'in-progress': { label: t('feedback.status.processing') || 'Processing', color: 'var(--accent-amber)', bg: 'rgba(245,158,11,0.1)' },
   };
 
   const filtered = mockFeedback.filter(f => f.author.toLowerCase().includes(search.toLowerCase()) || f.module.toLowerCase().includes(search.toLowerCase()));
@@ -38,6 +37,13 @@ export default function FeedbackPage() {
   const openCount = mockFeedback.filter(f => f.status === 'open').length;
   const resolvedCount = mockFeedback.filter(f => f.status === 'resolved').length;
   const avgRating = (mockFeedback.reduce((sum, f) => sum + f.rating, 0) / mockFeedback.length).toFixed(1);
+
+  const stats = [
+    { label: t('feedback.metrics.volume'), value: totalFeedback, icon: MessageSquare, color: 'var(--brand)' },
+    { label: t('feedback.metrics.active'), value: openCount, icon: AlertCircle, color: 'var(--accent-rose)' },
+    { label: t('feedback.metrics.score'), value: avgRating + '/5', icon: Star, color: 'var(--accent-amber)' },
+    { label: t('feedback.metrics.rate'), value: resolvedCount, icon: Check, color: 'var(--accent-green)' },
+  ];
 
   return (
     <AdminLayout
@@ -48,103 +54,62 @@ export default function FeedbackPage() {
         { icon: <Check size={14} />, label: t('feedback.resolve'), primary: true },
       ]}
     >
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="pro-card p-5 bg-gradient-to-br from-violet-500/20 to-violet-600/10 border-violet-500/30 relative overflow-hidden group">
-          <div className="absolute -right-4 -top-4 w-24 h-24 bg-violet-500/20 rounded-full blur-2xl group-hover:bg-violet-500/30 transition-all" />
-          <div className="relative z-10">
+        {stats.map((stat, i) => (
+          <div key={i} className="pro-card p-5">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center">
-                <MessageSquare size={20} className="text-violet-400" />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: stat.color + '15', color: stat.color }}>
+                <stat.icon size={20} />
               </div>
-              <span className="text-violet-400 font-bold text-xs uppercase tracking-wider">{t('feedback.metrics.volume')}</span>
+              <span className="font-bold text-xs uppercase tracking-wider" style={{ color: 'var(--text-muted)' }}>{stat.label}</span>
             </div>
-            <div className="text-4xl font-black text-white"><CountUpStat end={String(totalFeedback)} duration={1000} /></div>
-            <p className="text-white/50 text-xs mt-1">total feedback</p>
-          </div>
-        </div>
-
-        <div className="pro-card p-5 bg-gradient-to-br from-rose-500/20 to-rose-600/10 border-rose-500/30 relative overflow-hidden group">
-          <div className="absolute -right-4 -top-4 w-24 h-24 bg-rose-500/20 rounded-full blur-2xl group-hover:bg-rose-500/30 transition-all" />
-          <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-xl bg-rose-500/20 flex items-center justify-center">
-                <AlertCircle size={20} className="text-rose-400" />
-              </div>
-              <span className="text-rose-400 font-bold text-xs uppercase tracking-wider">{t('feedback.metrics.active')}</span>
+            <div className="text-3xl font-black" style={{ color: 'var(--text-primary)' }}>
+              {typeof stat.value === 'number' ? <CountUpStat end={String(stat.value)} /> : stat.value}
             </div>
-            <div className="text-4xl font-black text-white"><CountUpStat end={String(openCount)} duration={1000} /></div>
-            <p className="text-white/50 text-xs mt-1">open tickets</p>
           </div>
-        </div>
-
-        <div className="pro-card p-5 bg-gradient-to-br from-amber-500/20 to-amber-600/10 border-amber-500/30 relative overflow-hidden group">
-          <div className="absolute -right-4 -top-4 w-24 h-24 bg-amber-500/20 rounded-full blur-2xl group-hover:bg-amber-500/30 transition-all" />
-          <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
-                <Star size={20} className="text-amber-400" />
-              </div>
-              <span className="text-amber-400 font-bold text-xs uppercase tracking-wider">{t('feedback.metrics.score')}</span>
-            </div>
-            <div className="text-4xl font-black text-white"><CountUpStat end={avgRating} duration={1000} />&nbsp;/5</div>
-            <p className="text-white/50 text-xs mt-1">avg rating</p>
-          </div>
-        </div>
-
-        <div className="pro-card p-5 bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 border-emerald-500/30 relative overflow-hidden group">
-          <div className="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/20 rounded-full blur-2xl group-hover:bg-emerald-500/30 transition-all" />
-          <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-                <Check size={20} className="text-emerald-400" />
-              </div>
-              <span className="text-emerald-400 font-bold text-xs uppercase tracking-wider">{t('feedback.metrics.rate')}</span>
-            </div>
-            <div className="text-4xl font-black text-white"><CountUpStat end={String(resolvedCount)} duration={1000} /></div>
-            <p className="text-white/50 text-xs mt-1">resolved</p>
-          </div>
-        </div>
+        ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Feedback List */}
-        <div className="rounded-2xl" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
-          <div className="p-5 border-b flex flex-wrap items-center gap-4" style={{ borderColor: 'var(--border-subtle)' }}>
-            <div className="relative flex-1 min-w-[280px]">
-              <SearchIcon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
+        <div className="pro-card">
+          <div className="p-4 border-b" style={{ borderColor: 'var(--border-subtle)' }}>
+            <div className="relative">
+              <SearchIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-muted)' }} />
               <input
-                value={search} onChange={e => setSearch(e.target.value)}
+                value={search}
+                onChange={e => setSearch(e.target.value)}
                 placeholder={t('feedback.search')}
-                className="pro-input pro-glass w-full pl-12 pr-4 py-2.5 rounded-xl text-sm"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm"
+                style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border-subtle)', color: 'var(--text-primary)' }}
               />
             </div>
           </div>
 
-          <div className="max-h-[600px] overflow-y-auto" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+          <div className="max-h-[500px] overflow-y-auto">
             {filtered.map((fb) => {
-              const ST = STATUS_MAP[fb.status] || STATUS_MAP.open;
-              const isActive = expanded === fb.id;
-              
+              const ST = STATUS_MAP[fb.status];
               return (
-                <div key={fb.id} className="p-5 cursor-pointer" onClick={() => setExpanded(fb)} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-                  <div className="flex items-start gap-4">
-                    <img src={fb.avatar} className="avatar-img" alt="" loading="lazy" />
+                <div 
+                  key={fb.id} 
+                  className="p-4 cursor-pointer hover:bg-[var(--bg-card-hover)]"
+                  style={{ borderBottom: '1px solid var(--border-subtle)' }}
+                  onClick={() => setExpanded(fb)}
+                >
+                  <div className="flex items-start gap-3">
+                    <img src={fb.avatar} className="avatar-img" alt="" />
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2 mb-1">
-                        <span className="text-sm font-bold text-white truncate">{fb.author}</span>
-                        <span className="text-[9px] font-black px-2 py-1 rounded-md uppercase" style={{ color: ST.color, background: ST.bg }}>{ST.label}</span>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-semibold text-sm truncate" style={{ color: 'var(--text-primary)' }}>{fb.author}</span>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded" style={{ color: ST.color, background: ST.bg }}>{ST.label}</span>
                       </div>
-                      <p className="text-xs text-[var(--text-muted)] mb-2 truncate">{fb.module}</p>
-                      <p className="text-sm text-[var(--text-secondary)] line-clamp-2 mb-2">"{fb.comment}"</p>
-                      <div className="flex items-center gap-3">
-                        <span className="flex items-center gap-1 text-[10px] text-[var(--text-muted)]">
-                          {fb.rating >= 4 ? <ThumbsUp size={12} className="text-emerald-400" /> : <ThumbsDown size={12} className="text-rose-400" />}
+                      <p className="text-xs truncate mb-1" style={{ color: 'var(--text-muted)' }}>{fb.module}</p>
+                      <p className="text-sm line-clamp-2 mb-2" style={{ color: 'var(--text-secondary)' }}>"{fb.comment}"</p>
+                      <div className="flex items-center gap-3 text-xs" style={{ color: 'var(--text-muted)' }}>
+                        <span className="flex items-center gap-1">
+                          {fb.rating >= 4 ? <ThumbsUp size={12} /> : <ThumbsDown size={12} />}
                           {fb.rating}/5
                         </span>
-                        <span className="text-[10px] text-[var(--text-muted)] flex items-center gap-1">
-                          <Clock size={12} /> {fb.date}
-                        </span>
+                        <span className="flex items-center gap-1"><Clock size={12} /> {fb.date}</span>
                       </div>
                     </div>
                   </div>
@@ -154,52 +119,51 @@ export default function FeedbackPage() {
           </div>
         </div>
 
-        {/* Feedback Detail */}
-        <div className="rounded-2xl overflow-hidden" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
+        <div className="pro-card overflow-hidden">
           {expanded ? (
-            <div className="p-0">
-              <div className="relative h-48">
-                <img src={expanded.image} alt="" className="feedback-img" style={{ filter: 'none' }} />
-                <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.2), transparent)' }} />
-                <img src={expanded.avatar} className="avatar-lg absolute bottom-4 left-4 border-2 border-white" alt="" loading="eager" style={{ filter: 'none' }} />
+            <div>
+              <div className="relative h-44">
+                <img src={expanded.image} alt="" className="feedback-img" style={{ height: '176px' }} />
+                <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)' }} />
+                <img src={expanded.avatar} className="avatar-lg absolute bottom-3 left-3 border-2 border-white" alt="" />
               </div>
-              <div className="p-5">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-black text-white">{expanded.author}</h3>
-                  <span className={`text-[10px] font-black px-2 py-1 rounded-md uppercase ${expanded.rating >= 4 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}>
-                    {expanded.rating}/5
-                  </span>
+              <div className="p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>{expanded.author}</h3>
+                  <span className="text-xs font-bold px-2 py-1 rounded" style={{ 
+                    color: STATUS_MAP[expanded.status].color, 
+                    background: STATUS_MAP[expanded.status].bg 
+                  }}>{expanded.rating}/5</span>
                 </div>
-                <p className="text-sm text-[var(--text-muted)] mb-4">{expanded.module} • {expanded.date}</p>
-                <p className="text-base text-white mb-6">"{expanded.comment}"</p>
-                <div className="flex flex-wrap gap-2 mb-6">
-                  <span className="text-[9px] font-black px-2 py-1 rounded-md bg-[var(--brand)]/10 text-[var(--brand)] uppercase border border-[var(--brand)]/20">{expanded.category}</span>
-                  <span className="text-[9px] font-black px-2 py-1 rounded-md uppercase" style={{ color: STATUS_MAP[expanded.status].color, background: STATUS_MAP[expanded.status].bg }}>{STATUS_MAP[expanded.status].label}</span>
+                <p className="text-xs mb-3" style={{ color: 'var(--text-muted)' }}>{expanded.module} • {expanded.date}</p>
+                <p className="text-sm mb-4" style={{ color: 'var(--text-secondary)' }}>"{expanded.comment}"</p>
+                <div className="flex gap-2 mb-4">
+                  <span className="text-[10px] font-bold px-2 py-1 rounded" style={{ background: 'var(--brand-dim)', color: 'var(--brand)' }}>{expanded.category}</span>
+                  <span className="text-[10px] font-bold px-2 py-1 rounded" style={{ 
+                    color: STATUS_MAP[expanded.status].color, 
+                    background: STATUS_MAP[expanded.status].bg 
+                  }}>{STATUS_MAP[expanded.status].label}</span>
                 </div>
-                <div className="flex gap-3">
-                  <button className="flex-1 bg-[var(--brand)] hover:opacity-90 transition-opacity py-3 rounded-xl text-white font-bold text-sm flex items-center justify-center gap-2 border-none">
-                    <Reply size={16} /> Reply
+                <div className="flex gap-2">
+                  <button className="flex-1 py-2.5 rounded-lg font-semibold text-sm" style={{ background: 'var(--brand)', color: '#fff' }}>
+                    <Reply size={16} className="inline mr-2" /> Reply
                   </button>
-                  <button className="px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white transition-all border border-white/10">
+                  <button className="px-3 rounded-lg" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border-subtle)' }}>
                     <MoreVertical size={16} />
                   </button>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="h-full flex items-center justify-center p-12">
+            <div className="h-[300px] flex items-center justify-center">
               <div className="text-center">
-                <MessageSquare size={48} className="text-white/20 mx-auto mb-4" />
-                <p className="text-white/50 font-medium">Select a feedback to view details</p>
+                <MessageSquare size={48} className="mx-auto mb-3" style={{ color: 'var(--text-muted)', opacity: 0.3 }} />
+                <p style={{ color: 'var(--text-muted)' }}>Select feedback to view details</p>
               </div>
             </div>
           )}
         </div>
       </div>
-
-      {expanded && (
-        <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" onClick={() => setExpanded(null)} />
-      )}
     </AdminLayout>
   );
 }

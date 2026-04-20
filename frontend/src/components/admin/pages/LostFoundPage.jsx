@@ -29,15 +29,15 @@ function ItemDrawer({ item, onClose }) {
             <img src={item.image} alt={item.item} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${item.color}40, ${item.color}10)` }}>
-              <Icon size={64} className="text-white/30" />
+              <Icon size={64} className="text-[var(--text-muted)]/30" />
             </div>
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-          <button onClick={onClose} className="absolute top-4 right-4 p-2.5 rounded-full bg-black/30 backdrop-blur-md hover:bg-black/50 text-white/80 hover:text-white transition-all">
+          <button onClick={onClose} className="absolute top-4 right-4 p-2.5 rounded-full bg-black/30 backdrop-blur-md hover:bg-black/50 text-[var(--text-primary)]/80 hover:text-[var(--text-primary)] transition-all">
             <ChevronRight size={20} />
           </button>
           <div className="absolute bottom-4 left-4 right-4">
-            <span className={`inline-flex items-center gap-1.5 text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest ${item.type === 'lost' ? 'bg-rose-500/90 text-white' : 'bg-emerald-500/90 text-white'}`}>
+            <span className={`inline-flex items-center gap-1.5 text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-widest ${item.type === 'lost' ? 'bg-rose-500/90 text-[var(--text-primary)]' : 'bg-emerald-500/90 text-[var(--text-primary)]'}`}>
               {item.type === 'lost' ? <AlertCircle size={12} /> : <CircleCheck size={12} />}
               {item.type === 'lost' ? t('lost_found.types.lost') : t('lost_found.types.found')}
             </span>
@@ -45,38 +45,38 @@ function ItemDrawer({ item, onClose }) {
         </div>
 
         <div className="flex-1 p-6 overflow-y-auto bg-[var(--bg-main)]">
-          <h2 className="text-2xl font-black text-white mb-2">{item.item}</h2>
+          <h2 className="text-2xl font-black text-[var(--text-primary)] mb-2">{item.item}</h2>
           <p className="text-[var(--text-muted)] text-sm mb-6">{item.category}</p>
 
           <div className="space-y-4">
-            <div className="pro-card p-4 bg-white/[0.02] border border-white/5">
+            <div className="pro-card p-4 bg-[var(--bg-card-hover)]/[0.02] border border-[var(--border-subtle)]">
               <p className="text-[10px] text-[var(--text-muted)] uppercase font-bold tracking-wider mb-3">{t('lost_found.details.coordinates')}</p>
-              <div className="flex items-center gap-3 text-white font-semibold">
+              <div className="flex items-center gap-3 text-[var(--text-primary)] font-semibold">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[var(--brand)]/20">
                   <MapPin size={16} className="text-[var(--brand)]" />
                 </div>
                 {item.location}
               </div>
             </div>
-            <div className="pro-card p-4 bg-white/[0.02] border border-white/5">
+            <div className="pro-card p-4 bg-[var(--bg-card-hover)]/[0.02] border border-[var(--border-subtle)]">
               <p className="text-[10px] text-[var(--text-muted)] uppercase font-bold tracking-wider mb-3">{t('lost_found.details.cataloged')}</p>
-              <div className="flex items-center gap-3 text-white font-semibold">
+              <div className="flex items-center gap-3 text-[var(--text-primary)] font-semibold">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-purple-500/20">
                   <Clock size={16} className="text-purple-400" />
                 </div>
                 {item.time}
               </div>
             </div>
-            <div className="pro-card p-4 bg-white/[0.02] border border-white/5">
+            <div className="pro-card p-4 bg-[var(--bg-card-hover)]/[0.02] border border-[var(--border-subtle)]">
               <p className="text-[10px] text-[var(--text-muted)] uppercase font-bold tracking-wider mb-3">Reported by</p>
-              <div className="flex items-center gap-3 text-white font-semibold">
+              <div className="flex items-center gap-3 text-[var(--text-primary)] font-semibold">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-orange-500/20">
                   <span className="text-orange-400 font-bold text-xs">{item.user.charAt(0)}</span>
                 </div>
                 {item.user}
               </div>
             </div>
-            <div className="pro-card p-4 bg-white/[0.02] border border-white/5">
+            <div className="pro-card p-4 bg-[var(--bg-card-hover)]/[0.02] border border-[var(--border-subtle)]">
               <p className="text-[10px] text-[var(--text-muted)] uppercase font-bold tracking-wider mb-3">Status</p>
               <span className={`inline-flex items-center gap-1.5 text-[10px] font-black px-2.5 py-1 rounded-md uppercase ${item.status === 'resolved' ? 'bg-emerald-500/20 text-emerald-400' : item.status === 'recorded' ? 'bg-blue-500/20 text-blue-400' : 'bg-amber-500/20 text-amber-400'}`}>
                 {item.status}
@@ -85,13 +85,13 @@ function ItemDrawer({ item, onClose }) {
           </div>
         </div>
 
-        <div className="p-6 border-t border-white/5 bg-[var(--bg-card)]">
+        <div className="p-6 border-t border-[var(--border-subtle)] bg-[var(--bg-card)]">
           <div className="flex gap-3">
-            <button className="flex-1 bg-[var(--brand)] hover:opacity-90 transition-opacity py-3.5 rounded-xl text-white font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 border-none cursor-pointer">
+            <button className="flex-1 bg-[var(--brand)] hover:opacity-90 transition-opacity py-3.5 rounded-xl text-[var(--text-primary)] font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 border-none cursor-pointer">
               <CheckCircle2 size={18} />
               {t('lost_found.actions.resolve')}
             </button>
-            <button className="px-4 py-3.5 rounded-xl bg-white/5 hover:bg-white/10 text-white transition-all border border-white/10">
+            <button className="px-4 py-3.5 rounded-xl bg-white/5 hover:bg-white/10 text-[var(--text-primary)] transition-all border border-white/10">
               <span className="font-bold text-sm">{t('lost_found.actions.contact')}</span>
             </button>
           </div>
@@ -148,8 +148,8 @@ export default function LostFoundPage() {
                 </div>
                 <span className="text-rose-400 font-bold text-xs uppercase tracking-wider">{t('lost_found.types.lost')}</span>
               </div>
-              <div className="text-4xl font-black text-white"><CountUpStat end={String(lostCount)} duration={1000} /></div>
-              <p className="text-white/50 text-xs mt-1">items reported</p>
+              <div className="text-4xl font-black text-[var(--text-primary)]"><CountUpStat end={String(lostCount)} duration={1000} /></div>
+              <p className="text-[var(--text-muted)] text-xs mt-1">items reported</p>
             </div>
           </div>
 
@@ -162,8 +162,8 @@ export default function LostFoundPage() {
                 </div>
                 <span className="text-emerald-400 font-bold text-xs uppercase tracking-wider">{t('lost_found.types.found')}</span>
               </div>
-              <div className="text-4xl font-black text-white"><CountUpStat end={String(foundCount)} duration={1000} /></div>
-              <p className="text-white/50 text-xs mt-1">items waiting</p>
+              <div className="text-4xl font-black text-[var(--text-primary)]"><CountUpStat end={String(foundCount)} duration={1000} /></div>
+              <p className="text-[var(--text-muted)] text-xs mt-1">items waiting</p>
             </div>
           </div>
 
@@ -176,8 +176,8 @@ export default function LostFoundPage() {
                 </div>
                 <span className="text-[var(--brand)] font-bold text-xs uppercase tracking-wider">Recovery</span>
               </div>
-              <div className="text-4xl font-black text-white"><CountUpStat end="94" duration={1000} />%</div>
-              <p className="text-white/50 text-xs mt-1">{t('lost_found.hero.success')}</p>
+              <div className="text-4xl font-black text-[var(--text-primary)]"><CountUpStat end="94" duration={1000} />%</div>
+              <p className="text-[var(--text-muted)] text-xs mt-1">{t('lost_found.hero.success')}</p>
             </div>
           </div>
         </div>
@@ -190,7 +190,7 @@ export default function LostFoundPage() {
               <input
                 value={search} onChange={e => setSearch(e.target.value)}
                 placeholder={t('lost_found.search')}
-                className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-12 pr-4 text-sm text-white focus:border-[var(--brand)] transition-all outline-none"
+                className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-12 pr-4 text-sm text-[var(--text-primary)] focus:border-[var(--brand)] transition-all outline-none"
               />
             </div>
             <div className="flex gap-2">
@@ -200,8 +200,8 @@ export default function LostFoundPage() {
                   onClick={() => setFilter(f)}
                   className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
                     filter === f 
-                      ? 'bg-[var(--brand)] text-white' 
-                      : 'bg-white/5 text-[var(--text-muted)] hover:bg-white/10 hover:text-white'
+                      ? 'bg-[var(--brand)] text-[var(--text-primary)]' 
+                      : 'bg-white/5 text-[var(--text-muted)] hover:bg-white/10 hover:text-[var(--text-primary)]'
                   }`}
                 >
                   {f === 'all' ? t('lost_found.categories') : t(`lost_found.types.${f}`)}
@@ -226,28 +226,28 @@ export default function LostFoundPage() {
                     <img src={item.image} alt={item.item} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${item.color}30, ${item.color}10)` }}>
-                      <Icon size={48} className="text-white/30" />
+                      <Icon size={48} className="text-[var(--text-muted)]/30" />
                     </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                  <span className={`absolute top-3 left-3 text-[9px] font-black px-2 py-1 rounded-full uppercase tracking-widest flex items-center gap-1 ${item.type === 'lost' ? 'bg-rose-500/90 text-white' : 'bg-emerald-500/90 text-white'}`}>
+                  <span className={`absolute top-3 left-3 text-[9px] font-black px-2 py-1 rounded-full uppercase tracking-widest flex items-center gap-1 ${item.type === 'lost' ? 'bg-rose-500/90 text-[var(--text-primary)]' : 'bg-emerald-500/90 text-[var(--text-primary)]'}`}>
                     {item.type === 'lost' ? <AlertCircle size={10} /> : <CircleCheck size={10} />}
                     {item.type === 'lost' ? t('lost_found.types.lost') : t('lost_found.types.found')}
                   </span>
-                  <span className={`absolute top-3 right-3 text-[9px] font-bold px-2 py-1 rounded-md uppercase ${item.status === 'resolved' ? 'bg-emerald-500/80 text-white' : item.status === 'recorded' ? 'bg-blue-500/80 text-white' : 'bg-amber-500/80 text-white'}`}>
+                  <span className={`absolute top-3 right-3 text-[9px] font-bold px-2 py-1 rounded-md uppercase ${item.status === 'resolved' ? 'bg-emerald-500/80 text-[var(--text-primary)]' : item.status === 'recorded' ? 'bg-blue-500/80 text-[var(--text-primary)]' : 'bg-amber-500/80 text-[var(--text-primary)]'}`}>
                     {item.status}
                   </span>
                 </div>
                 <div className="p-4">
-                  <h3 className="text-base font-bold text-white mb-2 truncate group-hover:text-[var(--brand)] transition-colors">{item.item}</h3>
+                  <h3 className="text-base font-bold text-[var(--text-primary)] mb-2 truncate group-hover:text-[var(--brand)] transition-colors">{item.item}</h3>
                   <div className="flex items-center gap-2 text-[11px] text-[var(--text-muted)]">
                     <span className="flex items-center gap-1"><MapPin size={12} /> {item.location}</span>
                   </div>
-                  <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/5">
+                  <div className="flex items-center justify-between mt-3 pt-3 border-t border-[var(--border-subtle)]">
                     <span className="flex items-center gap-1 text-[10px] text-[var(--text-muted)]">
                       <Clock size={12} /> {item.time}
                     </span>
-                    <span className="text-[10px] font-medium text-white/60">{item.user}</span>
+                    <span className="text-[10px] font-medium text-[var(--text-primary)]/60">{item.user}</span>
                   </div>
                 </div>
               </div>
@@ -257,8 +257,8 @@ export default function LostFoundPage() {
 
         {filtered.length === 0 && (
           <div className="pro-card p-12 text-center">
-            <Package size={48} className="text-white/20 mx-auto mb-4" />
-            <p className="text-white/50 font-medium">No items found</p>
+            <Package size={48} className="text-[var(--text-primary)]/20 mx-auto mb-4" />
+            <p className="text-[var(--text-primary)]/50 font-medium">No items found</p>
           </div>
         )}
       </div>

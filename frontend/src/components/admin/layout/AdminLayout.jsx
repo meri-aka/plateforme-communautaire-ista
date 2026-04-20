@@ -38,7 +38,7 @@ export default function AdminLayout({ children, title, subtitle, actions }) {
       
       <div 
         style={{ transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}
-        className={`flex-1 flex flex-col min-h-screen relative z-10 ${isCollapsed ? 'lg:ml-[80px]' : 'lg:ml-[280px]'}`}
+        className={`flex-1 flex flex-col min-h-screen relative z-10 ${isCollapsed ? 'lg:ml-[70px]' : 'lg:ml-[240px]'}`}
       >
         <Navbar 
           title={title} 

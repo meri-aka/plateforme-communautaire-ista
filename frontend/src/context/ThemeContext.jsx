@@ -2,95 +2,68 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 const ThemeContext = createContext();
 
-export const TOKENS = {
+const THEME_COLORS = {
   dark: {
-    bg:    '#04060E',
-    card:  '#080C18',
-    cardH: '#0B1020',
-    b0:    'rgba(255,255,255,0.055)',
-    b1:    'rgba(255,255,255,0.11)',
-    div:   'rgba(255,255,255,0.04)',
-    t1:    '#EFF4FF',
-    t2:    '#8899B4',
-    t3:    '#3D4F6A',
-    t4:    '#1A2233',
-    green: '#10B981', greenBg: 'rgba(16,185,129,0.10)',
-    amber: '#F59E0B', amberBg: 'rgba(245,158,11,0.10)',
-    rose:  '#F43F5E', roseBg:  'rgba(244,63,94,0.10)',
-    blue:  '#3B82F6', blueBg:  'rgba(59,130,246,0.10)',
-    purple:'#8B5CF6', purpleBg:'rgba(139,92,246,0.10)',
+    bgMain: '#0F1117',
+    bgCard: '#161A23',
+    bgCardHover: '#1C212D',
+    bgElevated: '#1A1F29',
+    textPrimary: '#F4F5F7',
+    textSecondary: '#9CA3AF',
+    textMuted: '#6B7280',
+    brand: '#84CC27',
+    brandDim: 'rgba(132, 204, 39, 0.15)',
+    brandGlow: 'rgba(132, 204, 39, 0.25)',
+    borderSubtle: 'rgba(255, 255, 255, 0.06)',
+    borderActive: 'rgba(255, 255, 255, 0.12)',
   },
   light: {
-    bg:    '#F8FAFC',
-    card:  '#FFFFFF',
-    cardH: '#F1F5F9',
-    b0:    'rgba(0,0,0,0.05)',
-    b1:    'rgba(0,0,0,0.1)',
-    div:   'rgba(0,0,0,0.04)',
-    t1:    '#0F172A',
-    t2:    '#475569',
-    t3:    '#94A3B8',
-    t4:    '#E2E8F0',
-    green: '#059669', greenBg: 'rgba(16,185,129,0.15)',
-    amber: '#D97706', amberBg: 'rgba(245,158,11,0.15)',
-    rose:  '#E11D48', roseBg:  'rgba(244,63,94,0.15)',
-    blue:  '#2563EB', blueBg:  'rgba(59,130,246,0.15)',
-    purple:'#7C3AED', purpleBg:'rgba(139,92,246,0.15)',
-  }
-};
-
-const CSS_VARS = {
-  dark: {
-    '--bg-main': '#04060b',
-    '--bg-card': 'rgba(10, 15, 25, 0.65)',
-    '--bg-card-hover': 'rgba(18, 25, 40, 0.85)',
-    '--text-primary': '#f8fafc',
-    '--text-secondary': '#94a3b8',
-    '--text-muted': '#475569',
-    '--glass-bg': 'rgba(6, 9, 15, 0.8)',
-    '--glass-border': 'rgba(255, 255, 255, 0.1)',
-    '--glass-highlight': 'rgba(255, 255, 255, 0.05)',
-    '--border-subtle': 'rgba(255, 255, 255, 0.05)',
-    '--border-active': 'rgba(255, 255, 255, 0.15)',
-  },
-  light: {
-    '--bg-main': '#F8FAFC',
-    '--bg-card': 'rgba(255, 255, 255, 0.8)',
-    '--bg-card-hover': 'rgba(241, 245, 249, 0.9)',
-    '--text-primary': '#0F172A',
-    '--text-secondary': '#475569',
-    '--text-muted': '#94A3B8',
-    '--glass-bg': 'rgba(255, 255, 255, 0.8)',
-    '--glass-border': 'rgba(0, 0, 0, 0.1)',
-    '--glass-highlight': 'rgba(255, 255, 255, 0.5)',
-    '--border-subtle': 'rgba(0, 0, 0, 0.05)',
-    '--border-active': 'rgba(0, 0, 0, 0.15)',
+    bgMain: '#EEF1F5',
+    bgCard: '#FFFFFF',
+    bgCardHover: '#F5F7FA',
+    bgElevated: '#FFFFFF',
+    textPrimary: '#1F2937',
+    textSecondary: '#4B5563',
+    textMuted: '#9CA3AF',
+    brand: '#4A7C23',
+    brandDim: 'rgba(74, 124, 35, 0.12)',
+    brandGlow: 'rgba(74, 124, 35, 0.15)',
+    borderSubtle: 'rgba(0, 0, 0, 0.06)',
+    borderActive: 'rgba(0, 0, 0, 0.12)',
   }
 };
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('theme') || 'dark';
-  });
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
 
   useEffect(() => {
     localStorage.setItem('theme', theme);
     const root = document.documentElement;
-    const vars = CSS_VARS[theme];
-    Object.entries(vars).forEach(([key, value]) => {
-      root.style.setProperty(key, value);
-    });
+    const colors = THEME_COLORS[theme];
+    
+    root.style.setProperty('--bg-main', colors.bgMain);
+    root.style.setProperty('--bg-card', colors.bgCard);
+    root.style.setProperty('--bg-card-hover', colors.bgCardHover);
+    root.style.setProperty('--bg-elevated', colors.bgElevated);
+    root.style.setProperty('--text-primary', colors.textPrimary);
+    root.style.setProperty('--text-secondary', colors.textSecondary);
+    root.style.setProperty('--text-muted', colors.textMuted);
+    root.style.setProperty('--brand', colors.brand);
+    root.style.setProperty('--brand-dim', colors.brandDim);
+    root.style.setProperty('--brand-glow', colors.brandGlow);
+    root.style.setProperty('--border-subtle', colors.borderSubtle);
+    root.style.setProperty('--border-active', colors.borderActive);
+    root.style.setProperty('--glass-bg', theme === 'dark' ? 'rgba(22, 26, 35, 0.9)' : 'rgba(255, 255, 255, 0.95)');
+    root.style.setProperty('--glass-border', colors.borderSubtle);
+    
     root.setAttribute('data-theme', theme);
+    document.body.style.background = colors.bgMain;
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
-  };
-
-  const currentTokens = TOKENS[theme];
+  const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, T: currentTokens }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );

@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ChevronDown, Sparkles, Users, Target, Bell } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from '../context/ThemeContext';
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const [showContent, setShowContent] = useState(false);
   const { t } = useTranslation();
+  const { theme } = useTheme();
 
   useEffect(() => {
     const timer = setTimeout(() => setShowContent(true), 300);
@@ -25,7 +27,7 @@ export default function LandingPage() {
       height: '100vh', 
       overflow: 'hidden',
       position: 'relative',
-      background: 'linear-gradient(135deg, #0a0f1c 0%, #1a2744 50%, #0f1929 100%)'
+      background: 'var(--bg-main)'
     }}>
       {/* Mesh Background */}
       <div className="absolute inset-0 mesh-bg opacity-100" />
@@ -46,9 +48,9 @@ export default function LandingPage() {
         }}
       >
         {/* Badge */}
-        <div className="mb-6 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10">
-          <span className="flex items-center gap-2 text-xs font-semibold text-white/70">
-            <Sparkles size={14} className="text-[#7BB342]" />
+        <div className="mb-6 px-4 py-2 rounded-full backdrop-blur-md border" style={{ background: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)', borderColor: theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }}>
+          <span className="flex items-center gap-2 text-xs font-semibold" style={{ color: theme === 'dark' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)' }}>
+            <Sparkles size={14} className="text-[var(--brand)]" />
             Campus Community Platform
           </span>
         </div>
@@ -64,11 +66,11 @@ export default function LandingPage() {
         </div>
 
         {/* Title */}
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white text-center mb-4 tracking-tight" style={{ letterSpacing: '-0.04em' }}>
-          ISTA <span className="text-[#7BB342]">Platform</span>
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-center mb-4 tracking-tight" style={{ letterSpacing: '-0.04em', color: 'var(--text-primary)' }}>
+          ISTA <span className="text-[var(--brand)]">Platform</span>
         </h1>
         
-        <p className="text-lg md:text-2xl text-white/70 text-center max-w-2xl mb-12 font-medium">
+        <p className="text-lg md:text-2xl text-center max-w-2xl mb-12 font-medium" style={{ color: 'var(--text-secondary)' }}>
           Your all-in-one campus community hub
         </p>
 
@@ -89,21 +91,25 @@ export default function LandingPage() {
           {features.map((feat, i) => (
             <div 
               key={i}
-              className="p-6 md:p-8 rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-white/[0.06] hover:border-[#7BB342]/30 hover:bg-white/[0.06] transition-all duration-500 cursor-pointer"
+              className="p-6 md:p-8 rounded-2xl backdrop-blur-xl border transition-all duration-500 cursor-pointer"
+              style={{ 
+                background: theme === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.8)',
+                borderColor: theme === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.1)',
+              }}
             >
-              <div className="w-14 h-14 rounded-2xl bg-[#7BB342]/10 flex items-center justify-center mb-5">
-                <feat.icon size={28} className="text-[#7BB342]" />
+              <div className="w-14 h-14 rounded-2xl bg-[var(--brand)]/10 flex items-center justify-center mb-5">
+                <feat.icon size={28} className="text-[var(--brand)]" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">{feat.title}</h3>
-              <p className="text-white/50 text-base leading-relaxed">{feat.desc}</p>
+              <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>{feat.title}</h3>
+              <p className="text-base leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{feat.desc}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Bottom Bar */}
-      <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-6 md:px-12 py-4" style={{ background: 'linear-gradient(to top, rgba(4,6,14,0.9), transparent)' }}>
-        <div className="flex items-center gap-6 text-white/40">
+      <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-6 md:px-12 py-4" style={{ background: theme === 'dark' ? 'linear-gradient(to top, rgba(4,6,14,0.9), transparent)' : 'linear-gradient(to top, rgba(255,255,255,0.9), transparent)' }}>
+        <div className="flex items-center gap-6" style={{ color: theme === 'dark' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)' }}>
           <span className="text-xs font-semibold uppercase tracking-widest">ISTA</span>
           <span className="hidden md:block text-xs">© 2025 All rights reserved</span>
         </div>
