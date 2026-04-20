@@ -1,0 +1,296 @@
+{
+  "nav": {
+    "overview": "Aperçu",
+    "users": "Répertoire Utilisateurs",
+    "posts": "Révision des Posts",
+    "lost_found": "Objets Trouvés",
+    "feedback": "Centre de Feedback",
+    "settings": "Paramètres Globaux",
+    "dispatch": "Centre de Dispatch",
+    "logs": "Journaux Système",
+    "logout": "Déconnexion",
+    "collapse": "Réduire le menu",
+    "expand": "Agrandir le menu",
+    "admin": "Admin"
+  },
+  "sections": {
+    "analytics": "Analytique & Modération",
+    "services": "Services",
+    "system": "Infrastructure Système"
+  },
+  "login": {
+    "node_access": "Accès Node Stratégique",
+    "terminal_live": "Terminal Actif",
+    "hero_title": "L'interface de commande définitive pour les opérations ISTA.",
+    "hero_subtitle": "Synchronisation en temps réel sur les nœuds numériques distribués.",
+    "init_ops": "Initialiser Ops",
+    "return_node": "Retour au Nœud",
+    "authorize": "Autoriser",
+    "handshake": "En attente de synchronisation d'identité...",
+    "alias": "Alias d'Identité",
+    "passkey": "Hash de Clé",
+    "persistent": "Lien Persistant",
+    "recovery": "Hash Perdu ?",
+    "secure_auth": "Autorisation Sécurisée",
+    "syncing": "Synchronisation...",
+    "credentials": "Identifiants Opérationnels",
+    "error_mismatch": "CRITIQUE : AUTH_SYNC_FAILURE. Incohérence du hash d'identification.",
+    "sidebar_title": "Terminal d'Accès Stratégique",
+    "sidebar_desc": "Synthèse d'identité pour la couche de gouvernance ISTA Connect."
+  },
+  "dashboard": {
+    "title": "Supervision Analytique",
+    "subtitle": "Performance opérationnelle et synchronisation des nœuds",
+    "actions": {
+      "cycle": "Cycle Standard",
+      "export": "Exporter Dataset"
+    },
+    "node_users": "Utilisateurs Node Actifs",
+    "throughput": "Débit de Contenu",
+    "signal": "Qualité du Signal",
+    "intelligence": "Flux d'Intelligence",
+    "success_rate": "Taux de Réussite",
+    "search_placeholder": "Rechercher des nœuds...",
+    "charts": {
+      "activity_title": "Flux d'Activité du Cluster",
+      "activity_desc": "Synchronisation des utilisateurs en temps réel",
+      "distribution_title": "Distribution des Nœuds",
+      "active_nodes": "Nœuds Actifs",
+      "live": "DIRECT",
+      "tfh": "24H",
+      "ready": "PRÊT",
+      "clusters": {
+        "digital": "Développement Digital",
+        "infra": "Infrastructure Digitale",
+        "ai": "Intelligence Artificielle"
+      },
+      "status": {
+        "optimal": "OPTIMAL",
+        "stable": "STABLE",
+        "syncing": "SYNCHRONISATION"
+      }
+    },
+    "logs": {
+      "title": "Journal d'Intégrité Système",
+      "view_history": "Voir l'Historique",
+      "suspend": "Suspendre le Flux",
+      "initial": "Reprendre le Flux",
+      "archive": "Archiver les Journaux",
+      "filter_level": "Niveau",
+      "filter_module": "Module : Tous"
+    },
+    "mock_logs": {
+      "identity": "Nouvelle identité sécurisée provisionnée pour le nœud ISTA-04",
+      "flagged": "Contenu auto-masqué : signalé par seuil (Thread #842)",
+      "db_sync": "Synchronisation de la base de données terminée - nœuds synchronisés : 14"
+    }
+  },
+  "users": {
+    "subtitle": "Organiser, modérer et gérer les membres de la plateforme",
+    "stats": {
+      "total": "Membres Totaux",
+      "verified": "Vérifiés",
+      "pending": "En attente",
+      "restricted": "Restreints"
+    },
+    "actions": {
+      "export": "Exporter les données",
+      "invite": "Inviter un membre"
+    },
+    "table": {
+      "search": "Rechercher par nom, email...",
+      "status_filter": "Statut : Tous",
+      "header_details": "Détails Utilisateur",
+      "header_access": "Niveau d'Accès",
+      "header_status": "Statut",
+      "header_actions": "Actions"
+    },
+    "status": {
+      "active": "Actif",
+      "banned": "Banni",
+      "inactive": "Inactif"
+    },
+    "roles": {
+      "admin": "Admin"
+    },
+    "fields": {
+      "dev": "Développement Digital",
+      "infra": "Infrastructure Digitale",
+      "ai": "Intelligence Artificielle",
+      "general": "Général"
+    },
+    "levels": {
+      "y1": "1ère Année",
+      "y2": "2ème Année"
+    }
+  },
+  "posts": {
+    "subtitle": "Réviser et modérer les signaux de contenu communautaire",
+    "table": {
+      "search": "Rechercher des rapports...",
+      "header_details": "Détails du Post",
+      "header_metrics": "Métriques",
+      "header_actions": "Actions"
+    },
+    "mock": {
+      "p1": "Patterns React Modernes",
+      "p2": "L'IA dans l'Infrastructure",
+      "p3": "Réponses d'Examen Cachées"
+    }
+  },
+  "lost_found": {
+    "title": "Centre de Récupération des Biens",
+    "subtitle": "Coordination du retour des objets perdus au sein de l'écosystème",
+    "register": "Enregistrer un Objet",
+    "search": "Rechercher des rapports...",
+    "categories": "Catégories",
+    "hero": {
+      "title": "Récupération des Biens",
+      "desc": "Retours réussis optimisés pour le nœud communautaire ISTA.",
+      "success": "succès"
+    },
+    "details": {
+      "coordinates": "Coordonnées",
+      "cataloged": "Catalogué"
+    },
+    "actions": {
+      "resolve": "Résoudre",
+      "contact": "Contacter"
+    },
+    "types": {
+      "lost": "Perdu",
+      "found": "Trouvé"
+    },
+    "categories_list": {
+      "tech": "Tech",
+      "labs": "Labs",
+      "library": "Bibliothèque",
+      "admin": "Admin",
+      "electronics": "Électronique",
+      "accessories": "Accessoires",
+      "personal": "Personnel"
+    },
+    "mock": {
+      "item1": "MacBook Pro 14\"",
+      "item2": "Coque iPhone 13",
+      "item3": "Portefeuille en cuir",
+      "item4": "AirPods Pro",
+      "loc1": "Labo 4",
+      "loc2": "Cafétéria",
+      "loc3": "Bibliothèque",
+      "loc4": "Salle 201"
+    }
+  },
+  "feedback": {
+    "title": "Centre d'Intelligence",
+    "subtitle": "Collecte des insights utilisateurs et signaux de santé de la plateforme",
+    "metrics": {
+      "volume": "Volume Total",
+      "active": "Problèmes Actifs",
+      "score": "Score Moyen",
+      "rate": "Taux de Résolution"
+    },
+    "search": "Rechercher par auteur ou module...",
+    "reply": "Répondre",
+    "cancel": "Annuler",
+    "resolve": "Résoudre",
+    "dispatch": "Envoyer la réponse",
+    "placeholder": "Tapez votre réponse...",
+    "categories": {
+      "experience": "Expérience",
+      "bug": "Signalement de Bug"
+    },
+    "mock": {
+      "c1": "Excellent module, les explications sont très claires !",
+      "c2": "La page des objets perdus ne se charge pas sur mobile."
+    }
+  },
+  "settings": {
+    "subtitle": "Configuration des paramètres orbitaux de l'écosystème ISTA",
+    "tabs": {
+      "core": "Config Noyau",
+      "security": "Sécurité",
+      "notifications": "Alertes",
+      "database": "Données"
+    },
+    "sections": {
+      "identity": "Identité Plateforme",
+      "localization": "Localisation",
+      "security": "Défense & Accès",
+      "alerts": "Canaux d'Alerte",
+      "database": "Intégrité des Données"
+    },
+    "fields": {
+      "alias": "Alias Global",
+      "env": "Environnement",
+      "url": "URL Passerelle",
+      "email": "Email Système",
+      "lang": "Langue Primaire",
+      "tz": "Fuseau Horaire"
+    },
+    "danger": {
+      "title": "Zone de Danger",
+      "desc": "Ces opérations sont IRREVERSIBLES. Assurez-vous d'avoir des sauvegardes.",
+      "wipe": "Effacer la Base de Données",
+      "revoke": "Révoquer tous les Jetons"
+    }
+  },
+  "notifications": {
+    "subtitle": "Connaissance situationnelle et signaux système en temps réel",
+    "sync_all": "Tout Synchroniser",
+    "purge": "Purger l'Archive",
+    "streams": "Flux de Signaux",
+    "status": {
+      "all": "Tous les Artefacts",
+      "unread": "Non lus uniquement",
+      "read": "Archivés"
+    },
+    "empty": {
+      "title": "Terminal Silencieux",
+      "desc": "Aucun signal entrant détecté."
+    },
+    "mock": {
+      "t1": "Signalement de Contenu Critique",
+      "t2": "Nouvel Utilisateur",
+      "t3": "Signal d'Intelligence",
+      "t4": "Mise à jour Récupération de Biens",
+      "b1": "Karim M. — \"Solutions d'examen suspectes\" a atteint le seuil de signalement.",
+      "b2": "Ahmed El Mansouri a initialisé son profil (Dev Digital).",
+      "b3": "Sentiment négatif détecté dans les retours récents.",
+      "b4": "Sara A. a enregistré un rapport de bien de haute valeur : MacBook Pro 14\"."
+    }
+  },
+  "common": {
+    "export": "Exporter des Données",
+    "sync": "Synchroniser",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "status_ready": "SYSTEME_PRET",
+    "view_all": "Tout Voir",
+    "on": "le",
+    "details": "Détails",
+    "delete": "Supprimer",
+    "time": {
+      "now": "À l'instant",
+      "m": "Il y a {{count}}m",
+      "h": "Il y a {{count}}h",
+      "d": "Il y a {{count}}j",
+      "yesterday": "Hier"
+    }
+  },
+  "logs": {
+    "filter": "Filtrer les traces...",
+    "stats": {
+      "throughput": "Débit d'Événements",
+      "errors": "Erreurs Critiques",
+      "health": "Santé du Service",
+      "alerts": "Alertes Actives"
+    },
+    "mock": {
+      "a1": "Délai de connexion à la base de données dépassé après 30s",
+      "a2": "Contenu auto-masqué : signalé par seuil (Thread #842)",
+      "a3": "Accès utilisateur révoqué pour violation de politique",
+      "a4": "Nouvelle identité sécurisée provisionnée pour le nœud ISTA-04"
+    }
+  }
+}
