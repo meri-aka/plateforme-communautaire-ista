@@ -39,6 +39,35 @@ export const TOKENS = {
   }
 };
 
+const CSS_VARS = {
+  dark: {
+    '--bg-main': '#04060b',
+    '--bg-card': 'rgba(10, 15, 25, 0.65)',
+    '--bg-card-hover': 'rgba(18, 25, 40, 0.85)',
+    '--text-primary': '#f8fafc',
+    '--text-secondary': '#94a3b8',
+    '--text-muted': '#475569',
+    '--glass-bg': 'rgba(6, 9, 15, 0.8)',
+    '--glass-border': 'rgba(255, 255, 255, 0.1)',
+    '--glass-highlight': 'rgba(255, 255, 255, 0.05)',
+    '--border-subtle': 'rgba(255, 255, 255, 0.05)',
+    '--border-active': 'rgba(255, 255, 255, 0.15)',
+  },
+  light: {
+    '--bg-main': '#F8FAFC',
+    '--bg-card': 'rgba(255, 255, 255, 0.8)',
+    '--bg-card-hover': 'rgba(241, 245, 249, 0.9)',
+    '--text-primary': '#0F172A',
+    '--text-secondary': '#475569',
+    '--text-muted': '#94A3B8',
+    '--glass-bg': 'rgba(255, 255, 255, 0.8)',
+    '--glass-border': 'rgba(0, 0, 0, 0.1)',
+    '--glass-highlight': 'rgba(255, 255, 255, 0.5)',
+    '--border-subtle': 'rgba(0, 0, 0, 0.05)',
+    '--border-active': 'rgba(0, 0, 0, 0.15)',
+  }
+};
+
 export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem('theme') || 'dark';
@@ -46,8 +75,12 @@ export function ThemeProvider({ children }) {
 
   useEffect(() => {
     localStorage.setItem('theme', theme);
-    document.body.style.backgroundColor = TOKENS[theme].bg;
-    document.body.style.color = TOKENS[theme].t1;
+    const root = document.documentElement;
+    const vars = CSS_VARS[theme];
+    Object.entries(vars).forEach(([key, value]) => {
+      root.style.setProperty(key, value);
+    });
+    root.setAttribute('data-theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {

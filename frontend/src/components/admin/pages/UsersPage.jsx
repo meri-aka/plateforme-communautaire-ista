@@ -6,6 +6,12 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import AdminLayout from '../layout/AdminLayout';
+import useCountUp from '../../../hooks/useCountUp.jsx';
+
+function CountUpStat({ end, duration = 1500 }) {
+  const display = useCountUp(end, duration);
+  return <>{display}</>;
+}
 
 export default function UsersPage() {
   const { t } = useTranslation();
@@ -62,7 +68,7 @@ export default function UsersPage() {
               <s.Icon size={20} color={s.color} />
             </div>
             <div>
-              <p className="text-2xl font-black text-[var(--text-primary)] leading-none">{s.value}</p>
+              <p className="text-2xl font-black text-[var(--text-primary)] leading-none"><CountUpStat end={s.value} duration={1200} /></p>
               <p className="text-[10px] text-[var(--text-muted)] mt-1 font-bold uppercase tracking-wider">{s.label}</p>
             </div>
           </div>

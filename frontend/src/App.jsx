@@ -1,6 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import './index.css';
+
+import LandingPage from './components/LandingPage';
 
 // Admin pages
 import Dashboard      from './components/admin/Dashboard';
@@ -16,11 +19,12 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
         <Routes>
             {/* Redirect root to admin */}
-            <Route path="/" element={<Navigate to="/admin" replace />} />
+            <Route path="/" element={<LandingPage />} />
 
             <Route path="/login" element={<LoginPage />} />
 
@@ -39,7 +43,8 @@ export default function App() {
             {/* Catch-all */}
             <Route path="*" element={<Navigate to="/admin" replace />} />
           </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

@@ -11,6 +11,12 @@ import {
 } from 'recharts';
 import { useTranslation } from 'react-i18next';
 import AdminLayout from './layout/AdminLayout';
+import useCountUp from '../../hooks/useCountUp.jsx';
+
+function CountUpStat({ end, duration = 1500, suffix = '' }) {
+  const display = useCountUp(end, duration);
+  return <>{display}{suffix}</>;
+}
 
 export default function Dashboard() {
   const { t } = useTranslation();
@@ -46,7 +52,7 @@ export default function Dashboard() {
         {[
           { label: t('dashboard.node_users'), value: '2,482', trend: '+12.5%', isUp: true,  Icon: Users,    color: '#7BB342' },
           { label: t('dashboard.throughput'), value: '142',   trend: '+5.2%',  isUp: true,  Icon: FileText, color: '#3B82F6' },
-          { label: t('dashboard.signal'),    value: '98.4%', trend: '-0.3%',  isUp: false, Icon: Activity, color: '#8B5CF6' },
+          { label: t('dashboard.signal'),    value: '98.4', append: '%', trend: '-0.3%',  isUp: false, Icon: Activity, color: '#8B5CF6' },
           { label: t('dashboard.intelligence'), value: '18',    trend: t('dashboard.charts.status.stable'), isUp: true,  Icon: MessageSquare, color: '#F43F5E' },
         ].map((stat, i) => (
           <div key={i} className="pro-card p-6 relative overflow-hidden animate-slide-up" style={{ animationDelay: `${i * 0.1}s` }}>
@@ -64,7 +70,7 @@ export default function Dashboard() {
               </div>
             </div>
             
-            <p className="text-3xl font-black text-[var(--text-primary)] mb-1 tracking-tighter">{stat.value}</p>
+            <p className="text-3xl font-black text-[var(--text-primary)] mb-1 tracking-tighter"><CountUpStat end={stat.value} duration={1200} /></p>
             <p className="text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider">{stat.label}</p>
             
             <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40px', background: `linear-gradient(transparent, ${stat.color}05)`, opacity: 0.5 }} />
@@ -140,7 +146,7 @@ export default function Dashboard() {
             </ResponsiveContainer>
             
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
-              <p className="text-4xl font-black text-white leading-none tracking-tighter">980</p>
+              <p className="text-4xl font-black text-white leading-none tracking-tighter"><CountUpStat end="980" duration={1500} /></p>
               <p className="text-[9px] font-black text-[var(--text-muted)] uppercase tracking-[0.2em] mt-2">{t('dashboard.charts.active_nodes')}</p>
             </div>
           </div>

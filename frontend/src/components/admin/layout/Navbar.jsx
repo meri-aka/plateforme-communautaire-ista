@@ -1,5 +1,6 @@
-import { Bell, Calendar, Download, Search as SearchIcon, Menu, ChevronLeft, ChevronRight, Globe } from 'lucide-react';
+import { Bell, Calendar, Download, Search as SearchIcon, Menu, ChevronLeft, ChevronRight, Globe, Sun, Moon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from '../../../context/ThemeContext';
 
 const T = {
   text1: 'var(--text-primary)',
@@ -11,6 +12,7 @@ const T = {
 
 export default function Navbar({ title, subtitle, actions = [], onMenuClick, onCollapseToggle, isCollapsed }) {
   const { t, i18n } = useTranslation();
+  const { theme, toggleTheme } = useTheme();
 
   const toggleLanguage = () => {
     const nextLang = i18n.language === 'en' ? 'fr' : 'en';
@@ -90,6 +92,19 @@ export default function Navbar({ title, subtitle, actions = [], onMenuClick, onC
         </button>
 
         <div style={{ width: '1px', height: '24px', background: T.border, margin: '0 4px' }} className="hidden xs:block" />
+
+        <button
+          onClick={toggleTheme}
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: '40px', height: '40px', borderRadius: '12px',
+            background: 'rgba(255, 255, 255, 0.03)', border: `1px solid ${T.border}`,
+            cursor: 'pointer', transition: 'all 0.2s', color: T.text2
+          }}
+          title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+        >
+          {theme === 'dark' ? <Sun size={18} className="text-amber-400" /> : <Moon size={18} className="text-indigo-400" />}
+        </button>
 
         {actions.map((btn, i) => (
           <button
