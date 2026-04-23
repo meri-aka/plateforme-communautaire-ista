@@ -1,7 +1,7 @@
 import { Bell, Calendar, Download, Search as SearchIcon, Menu, ChevronLeft, ChevronRight, Globe, Sun, Moon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../../context/ThemeContext';
-
+import React, { useState } from 'react';
 const T = {
   text1: 'var(--text-primary)',
   text2: 'var(--text-secondary)',
@@ -13,6 +13,7 @@ const T = {
 export default function Navbar({ title, subtitle, actions = [], onMenuClick, onCollapseToggle, isCollapsed }) {
   const { t, i18n } = useTranslation();
   const { theme, toggleTheme } = useTheme();
+  const [showNotifications, setShowNotifications] = React.useState(false);
 
   const toggleLanguage = () => {
     const nextLang = i18n.language === 'en' ? 'fr' : 'en';
@@ -135,6 +136,7 @@ export default function Navbar({ title, subtitle, actions = [], onMenuClick, onC
         ))}
 
         <button
+          onClick={() => setShowNotifications(!showNotifications)}
           style={{
             position: 'relative', width: '40px', height: '40px', borderRadius: '12px',
             background: 'var(--bg-card-hover)', border: `1px solid ${T.border}`,
@@ -149,6 +151,21 @@ export default function Navbar({ title, subtitle, actions = [], onMenuClick, onC
             background: '#F43F5E', border: '2px solid var(--bg-main)',
           }} />
         </button>
+          {showNotifications && (
+        <div style={{
+          position: 'absolute', top: '60px', right: '16px', zIndex: 100,
+          width: '320px', background: 'var(--bg-card)',
+          border: '1px solid var(--border-subtle)', borderRadius: '16px',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.2)', padding: '16px',
+        }}>
+          <p style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+            Notifications
+          </p>
+          <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '8px' }}>
+            No notifications yet.
+          </p>
+        </div>
+)}
       </div>
     </header>
   );

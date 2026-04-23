@@ -3,7 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import './index.css';
 
-import LandingPage from './components/LandingPage';
+// import LandingPage from './components/LandingPage';
 
 // Admin pages
 import Dashboard      from './components/admin/Dashboard';
@@ -24,7 +24,7 @@ export default function App() {
         <BrowserRouter>
         <Routes>
             {/* Redirect root to admin */}
-            <Route path="/" element={<LandingPage />} />
+            {/* <Route path="/" element={<LandingPage />} /> */}
 
             <Route path="/login" element={<LoginPage />} />
 
