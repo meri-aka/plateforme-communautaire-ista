@@ -26,7 +26,7 @@ class AuthController extends Controller
             'email'      => $request->email,
             'password'   => Hash::make($request->password),
             'role'       => $request->role ?? 'stagiaire',
-            'filiere_id' => $request->filiere_id,
+            'filiere_id' => $request->filiere_id ?: null,
             'bio'        => $request->bio,
         ]);
 
@@ -71,5 +71,22 @@ class AuthController extends Controller
     public function me(Request $request)
     {
         return response()->json($request->user()->load('filiere'));
+    }
+
+    public function updateMe(Request $request)
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'bio'        => 'sometimes|nullable|string',
+            'filiere_id' => 'sometimes|nullable|exists:filieres,id',
+        ]);
+
+        $user->update($validated);
+
+        return response()->json([
+            'message' => 'Profile updated.',
+            'user'    => $user->fresh()->load('filiere'),
+        ]);
     }
 }

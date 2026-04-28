@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import AdminLayout from '../layout/AdminLayout';
 import useCountUp from '../../../hooks/useCountUp.jsx';
 import api from '../../../api/axios';
+import { exportFeedbackPDF } from '../../../utils/exportPDF';
 
 function CountUpStat({ end, duration = 1500 }) {
   const display = useCountUp(end, duration);
@@ -79,7 +80,7 @@ export default function FeedbackPage() {
       title={t('feedback.title')}
       subtitle={t('feedback.subtitle')}
       actions={[
-        { icon: <Download size={14} />, label: t('common.export') },
+{ icon: <Download size={14} />, label: t('common.export'), onClick: () => exportFeedbackPDF(feedbacks) },
         {
           icon: resolving ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} />,
           label: resolving ? 'Resolving...' : `Resolve All (${pendingCount})`,

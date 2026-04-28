@@ -18,7 +18,7 @@ function CountUpStat({ end, duration = 1500 }) {
 
 export default function UsersPage() {
   const { t } = useTranslation();
-  const { stats } = useAdminStats();
+  const { stats, fetchStats } = useAdminStats();
 
   const [users, setUsers]         = useState([]);
   const [loading, setLoading]     = useState(true);
@@ -47,6 +47,12 @@ export default function UsersPage() {
     return () => clearTimeout(delay);
   }, [fetchUsers]);
 
+ useEffect(() => {
+  fetchStats();
+  const interval = setInterval(fetchStats, 30000);
+  return () => clearInterval(interval);
+}, [fetchStats]);
+
   const handleDelete = async (id) => {
     if (!confirm(t('users.confirm_delete'))) return;
     await api.delete(`/admin/users/${id}`);
@@ -73,14 +79,18 @@ const handleInvite = async () => {
   setInviteLoading(true);
   setInviteError('');
   try {
-    await api.post('/register', {
-      ...inviteData,
-      password: 'Ista@2025',
-      password_confirmation: 'Ista@2025',
-    });
+   await api.post('/register', {
+  name: inviteData.name,
+  email: inviteData.email,
+  role: inviteData.role,
+  filiere_id: inviteData.filiere_id || null,
+  password: 'Ista@2025',
+  password_confirmation: 'Ista@2025',
+});
     setShowInvite(false);
     setInviteData({ name: '', email: '', role: 'stagiaire', filiere_id: '' });
     fetchUsers();
+    fetchStats();
   } catch (err) {
     setInviteError(err.response?.data?.message ?? 'Failed to create user.');
   } finally {

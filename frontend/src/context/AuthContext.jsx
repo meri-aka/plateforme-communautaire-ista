@@ -31,6 +31,8 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     try {
       await api.post('/logout');
+    } catch (err) {
+      console.error('Logout error', err);
     } finally {
       localStorage.removeItem('token');
       setUser(null);

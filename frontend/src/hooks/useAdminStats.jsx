@@ -1,17 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../api/axios';
 
 export default function useAdminStats() {
-  const [stats, setStats] = useState(null);
+  const [stats, setStats]     = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError]     = useState(null);
 
-  useEffect(() => {
+  const fetchStats = useCallback(() => {
+    setLoading(true);
     api.get('/admin/stats')
       .then(res => setStats(res.data))
       .catch(err => setError(err))
       .finally(() => setLoading(false));
   }, []);
 
-  return { stats, loading, error };
+  useEffect(() => { fetchStats(); }, [fetchStats]);
+
+  return { stats, loading, error, fetchStats };
 }

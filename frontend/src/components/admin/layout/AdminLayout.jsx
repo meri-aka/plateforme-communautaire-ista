@@ -5,10 +5,11 @@ import Sidebar from './Sidebar';
 import Navbar  from './Navbar';
 
 export default function AdminLayout({ children, title, subtitle, actions }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
+  if (loading)               return null;
   if (!user)                 return <Navigate to="/login"  replace />;
   if (user.role !== 'admin') return <Navigate to="/"       replace />;
 

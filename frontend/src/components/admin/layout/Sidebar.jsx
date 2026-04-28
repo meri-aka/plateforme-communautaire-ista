@@ -225,7 +225,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
                 {user?.name || 'Administrator'}
               </p>
               <button
-                onClick={() => { logout(); navigate('/login'); }}
+                onClick={async () => { await logout(); navigate('/login'); }}
                 style={{
                   background: 'none', border: 'none', cursor: 'pointer', padding: 0,
                   fontSize: '10px', color: '#F43F5E', fontWeight: 800, textTransform: 'uppercase',

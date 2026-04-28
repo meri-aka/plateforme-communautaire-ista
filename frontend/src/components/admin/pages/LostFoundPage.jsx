@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import AdminLayout from '../layout/AdminLayout';
 import useCountUp from '../../../hooks/useCountUp.jsx';
 import api from '../../../api/axios';
+import { exportLostFoundPDF } from '../../../utils/exportPDF';
 
 function CountUpStat({ end, duration = 1500 }) {
   const display = useCountUp(end, duration);
@@ -247,7 +248,7 @@ export default function LostFoundPage() {
       subtitle={t('lost_found.subtitle')}
       actions={[
         { icon: <Plus size={14} />,     label: t('lost_found.register'), primary: true, onClick: () => setShowRegister(true) },
-        { icon: <Download size={14} />, label: t('common.export') },
+        { icon: <Download size={14} />, label: t('common.export'), onClick: () => exportLostFoundPDF(items) },
       ]}
     >
       <div className="space-y-6">

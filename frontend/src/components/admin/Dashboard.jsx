@@ -20,7 +20,8 @@ function CountUpStat({ end, duration = 1500, suffix = '' }) {
 
 export default function Dashboard() {
   const { t } = useTranslation();
-  const { stats, loading: statsLoading } = useAdminStats();
+  // const { stats, loading: statsLoading } = useAdminStats();
+  const { stats, loading: statsLoading, fetchStats } = useAdminStats();
 
   const trafficData = [
     { name: '00:00', users: 120 },
@@ -32,20 +33,22 @@ export default function Dashboard() {
     { name: '23:59', users: 300 },
   ];
 
-  const activityByCluster = [
-    { name: t('dashboard.charts.clusters.digital'), value: stats?.users?.stagiaires ?? 0, color: '#7BB342', status: t('dashboard.charts.status.optimal'), icon: Cpu     },
-    { name: t('dashboard.charts.clusters.infra'),   value: stats?.users?.formateurs ?? 0, color: '#1B365D', status: t('dashboard.charts.status.stable'),  icon: Network  },
-    { name: t('dashboard.charts.clusters.ai'),      value: stats?.posts?.total      ?? 0, color: '#8B5CF6', status: t('dashboard.charts.status.syncing'), icon: Brain    },
-  ];
+  const activityByCluster = (stats?.filieres ?? []).map((f, i) => ({
+  name:   f.name,
+  value:  f.count,
+  color:  ['#7BB342', '#1B365D', '#8B5CF6'][i % 3],
+  status: f.count > 0 ? t('dashboard.charts.status.optimal') : t('dashboard.charts.status.stable'),
+  icon:   [Cpu, Network, Brain][i % 3],
+}));
 
-  const totalNodes = (stats?.users?.stagiaires ?? 0) + (stats?.users?.formateurs ?? 0) + (stats?.posts?.total ?? 0);
+const totalNodes = activityByCluster.reduce((sum, f) => sum + f.value, 0);
 
   return (
     <AdminLayout
       title={t('dashboard.title')}
       subtitle={t('dashboard.subtitle')}
       actions={[
-        { icon: <Calendar size={14} />, label: t('dashboard.actions.cycle') },
+      { icon: <Calendar size={14} />, label: t('dashboard.actions.cycle'), onClick: fetchStats },
         {
           icon: <Download size={14} />,
           label: t('dashboard.actions.export'),

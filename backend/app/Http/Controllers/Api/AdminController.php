@@ -23,6 +23,12 @@ class AdminController extends Controller
                 'formateurs' => User::where('role', 'formateur')->count(),
                 'new_today'  => User::whereDate('created_at', today())->count(),
             ],
+            'filieres' => \App\Models\Filiere::withCount('users')->get()->map(fn($f) => [
+    'name'  => $f->name,
+    'code'  => $f->code,
+    'count' => $f->users_count,
+]),
+
             'posts' => [
                 'total'     => Post::count(),
                 'today'     => Post::whereDate('created_at', today())->count(),

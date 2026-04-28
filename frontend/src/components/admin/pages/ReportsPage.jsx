@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import AdminLayout from '../layout/AdminLayout';
 import useCountUp from '../../../hooks/useCountUp.jsx';
 import api from '../../../api/axios';
+import { exportReportsPDF } from '../../../utils/exportPDF';
 
 function CountUpStat({ end, duration = 1500 }) {
   const display = useCountUp(end, duration);
@@ -77,7 +78,7 @@ export default function ReportsPage() {
       title="Reports"
       subtitle="Manage user-submitted reports"
       actions={[
-        { icon: <Download size={14} />, label: 'Export' },
+      { icon: <Download size={14} />, label: 'Export', onClick: () => exportReportsPDF(reports) },
       ]}
     >
       {/* Stats */}

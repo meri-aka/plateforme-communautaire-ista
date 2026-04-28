@@ -39,23 +39,24 @@ export default function LoginPage() {
   }, [showForm]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-
-    try {
-      const user = await login(email, password);
-      if (user.role === 'admin') {
-        navigate('/admin');
-      } else {
-        navigate('/');
-      }
-    } catch (err) {
-      setError(t('login.error_mismatch'));
-    } finally {
-      setLoading(false);
+  e.preventDefault();
+  setError('');
+  setLoading(true);
+  try {
+    const user = await login(email, password);
+    if (user.role === 'admin') {
+      navigate('/admin');
+    } else if (!user.filiere_id) {
+      navigate('/complete-profile');
+    } else {
+      navigate('/');
     }
-  };
+  } catch (err) {
+    setError(t('login.error_mismatch'));
+  } finally {
+    setLoading(false);
+  }
+};
 
   const ThemeToggle = () => (
     <button

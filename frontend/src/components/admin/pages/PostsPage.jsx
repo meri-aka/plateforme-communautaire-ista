@@ -6,6 +6,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import AdminLayout from '../layout/AdminLayout';
 import api from '../../../api/axios';
+import { exportPostsPDF } from '../../../utils/exportPDF';
 
 export default function PostsPage() {
   const { t } = useTranslation();
@@ -47,7 +48,7 @@ export default function PostsPage() {
       title={t('nav.posts')}
       subtitle={t('posts.subtitle')}
       actions={[
-        { icon: <Download size={14} />, label: t('common.export') },
+        { icon: <Download size={14} />, label: t('common.export'), onClick: () => exportPostsPDF(posts) },
         { icon: <Plus size={14} />,     label: t('common.view_all'), primary: true },
       ]}
     >

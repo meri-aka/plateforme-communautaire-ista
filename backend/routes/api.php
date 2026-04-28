@@ -25,6 +25,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Auth
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me',      [AuthController::class, 'me']);
+    Route::patch('/me',    [AuthController::class, 'updateMe']);
+    Route::get('filieres', function () { return response()->json(\App\Models\Filiere::all()); });
 
     // Posts
     Route::apiResource('posts', PostController::class);
@@ -34,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('comments/{comment}',      [CommentController::class, 'destroy']);
 
     // Follow
+    Route::get('users/{user}',               [UserController::class, 'show']);
     Route::post('users/{user}/follow',       [FollowController::class, 'toggle']);
 
     // Lost & Found
