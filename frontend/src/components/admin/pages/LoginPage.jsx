@@ -16,6 +16,8 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [initSequence, setInitSequence] = useState(0);
+  const [mode, setMode] = useState('login'); // 'login' or 'forgot'
+  const [success, setSuccess] = useState('');
 
   const { theme, toggleTheme } = useTheme();
   const { login } = useAuth();
@@ -43,13 +45,18 @@ export default function LoginPage() {
   setError('');
   setLoading(true);
   try {
-    const user = await login(email, password);
-    if (user.role === 'admin') {
-      navigate('/admin');
-    } else if (!user.filiere_id) {
-      navigate('/complete-profile');
+    if (mode === 'forgot') {
+      await new Promise(r => setTimeout(r, 1500));
+      setSuccess(t('login.reset_sent') || 'Reset link sent to your email.');
     } else {
-      navigate('/');
+      const user = await login(email, password);
+      if (user.role === 'admin') {
+        navigate('/admin');
+      } else if (!user.filiere_id) {
+        navigate('/complete-profile');
+      } else {
+        navigate('/');
+      }
     }
   } catch (err) {
     setError(t('login.error_mismatch'));
@@ -187,20 +194,40 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center p-8 sm:p-24 bg-[var(--bg-main)] relative z-10 border-l border-[var(--glass-border)] shadow-2xl">
         <div style={{ width: '100%', maxWidth: '440px' }}>
           <button
-            onClick={() => setShowForm(false)}
+            onClick={() => { setShowForm(false); setMode('login'); setSuccess(''); setError(''); }}
             className="hover:text-[var(--brand)] transition-colors inline-flex items-center gap-2 font-bold mb-16"
           >
             <ArrowRight size={20} className="rotate-180" /> {t('login.return_node').toUpperCase()}
           </button>
 
+          {mode === 'forgot' && (
+            <button
+              onClick={() => { setMode('login'); setSuccess(''); setError(''); }}
+              className="hover:text-[var(--brand)] transition-colors inline-flex items-center gap-2 font-black text-[11px] tracking-widest uppercase mb-8"
+            >
+              <ArrowRight size={16} className="rotate-180" /> {t('login.back_to_login') || 'Back to login'}
+            </button>
+          )}
+
           <div className="mb-14" style={{ opacity: initSequence >= 1 ? 1 : 0, transition: 'all 0.8s' }}>
             <span className="text-[10px] font-black tracking-widest text-[var(--brand)] px-3 py-1.5 rounded-lg bg-[var(--brand)]/10 border border-[var(--brand)]/20 uppercase mb-4 inline-block">Security Layer-G1</span>
-            <h2 className="text-5xl font-black text-[var(--text-primary)] mb-4 tracking-tighter">{t('login.authorize')}</h2>
+            <h2 className="text-5xl font-black text-[var(--text-primary)] mb-4 tracking-tighter">
+              {mode === 'login' ? t('login.authorize') : t('login.reset_password') || 'Reset Pass'}
+            </h2>
             <div className="flex items-center gap-3">
               <div className="w-2 h-2 rounded-full bg-[var(--brand)] shadow-[0_0_10px_var(--brand)]" />
-              <p className="text-lg text-[var(--text-secondary)] font-medium">{t('login.handshake')}</p>
+              <p className="text-lg text-[var(--text-secondary)] font-medium">
+                {mode === 'login' ? t('login.handshake') : t('login.enter_email_reset') || 'Enter email to reset'}
+              </p>
             </div>
           </div>
+
+          {success && (
+            <div className="bg-[var(--brand)]/10 border border-[var(--brand)]/20 rounded-2xl p-5 mb-10 flex items-center gap-4 text-[var(--brand)] font-mono text-sm animate-fade-in">
+              <Cpu size={20} className="flex-shrink-0" />
+              <span>{success}</span>
+            </div>
+          )}
 
           {error && (
             <div className="bg-rose-500/10 border border-rose-500/20 rounded-2xl p-5 mb-10 flex items-center gap-4 text-rose-400 font-mono text-sm animate-fade-in">
@@ -223,18 +250,25 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="relative">
-              <label className="absolute -top-3 left-4 bg-[var(--bg-main)] px-2 text-[10px] font-black text-[var(--brand)] uppercase tracking-widest z-10">{t('login.passkey')}</label>
+            {mode === 'login' && (
               <div className="relative">
-                <KeyRound size={20} className="absolute left-5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
-                <input
-                  type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••" required
-                  className="w-full rounded-2xl py-5 pl-14 pr-6 outline-none transition-all"
-                  style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border-subtle)', color: 'var(--text-primary)' }}
-                />
+                <label className="absolute -top-3 left-4 bg-[var(--bg-main)] px-2 text-[10px] font-black text-[var(--brand)] uppercase tracking-widest z-10">{t('login.passkey')}</label>
+                <div className="relative">
+                  <KeyRound size={20} className="absolute left-5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
+                  <input
+                    type="password" value={password} onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••••••" required
+                    className="w-full rounded-2xl py-5 pl-14 pr-6 outline-none transition-all"
+                    style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border-subtle)', color: 'var(--text-primary)' }}
+                  />
+                </div>
+                <div className="flex justify-end mt-3">
+                  <button type="button" onClick={() => setMode('forgot')} className="text-[10px] font-black text-[var(--text-muted)] hover:text-[var(--brand)] transition-colors uppercase tracking-widest">
+                    {t('login.forgot_password') || 'Forgot Password?'}
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             <button
               type="submit" disabled={loading}
@@ -242,8 +276,8 @@ export default function LoginPage() {
               style={{ opacity: initSequence >= 4 ? 1 : 0 }}
             >
               {loading
-                ? <><Loader2 size={24} className="animate-spin" /> {t('login.syncing').toUpperCase()}</>
-                : t('login.secure_auth').toUpperCase()
+                ? <><Loader2 size={24} className="animate-spin" /> {(mode === 'login' ? t('login.syncing') : t('login.sending')).toUpperCase()}</>
+                : (mode === 'login' ? t('login.secure_auth') : t('login.send_link')).toUpperCase()
               }
             </button>
           </form>

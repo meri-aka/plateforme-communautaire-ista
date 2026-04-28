@@ -107,7 +107,10 @@ function redirectAfterAuth(user, navigate) {
 // ── Main Auth Page Component ──────────────────────────────────────────────────
 export default function UserAuthPage() {
   const location = useLocation();
-  const [mode, setMode] = useState(location.pathname === '/register' ? 'register' : 'login');
+  const [mode, setMode] = useState(
+    location.pathname === '/register' ? 'register' : 
+    location.pathname === '/forgot-password' ? 'forgot' : 'login'
+  );
   const { user, loading: authLoading, login } = useAuth();
   const navigate = useNavigate();
   const { theme } = useTheme();
@@ -120,8 +123,10 @@ export default function UserAuthPage() {
   const [errors, setErrors] = useState({});
   const [globalError, setGlobalError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   const isLogin = mode === 'login';
+  const isForgot = mode === 'forgot';
 
   useEffect(() => {
     if (!authLoading && user) redirectAfterAuth(user, navigate);
@@ -155,11 +160,19 @@ export default function UserAuthPage() {
       if (Object.keys(errs).length) { setErrors(errs); return; }
     }
 
+    if (isForgot) {
+      if (!form.email.includes('@')) { setErrors({ email: 'Enter a valid email address.' }); return; }
+    }
+
     setLoading(true);
     try {
       if (isLogin) {
         const u = await login(form.email, form.password);
         redirectAfterAuth(u, navigate);
+      } else if (isForgot) {
+        // Mocking API call for forgot password
+        await new Promise(r => setTimeout(r, 1500));
+        setSuccessMessage('A password reset link has been sent to your email.');
       } else {
         const res = await api.post('/register', { ...form, role: 'stagiaire' });
         localStorage.setItem('token', res.data.token);
@@ -184,6 +197,7 @@ export default function UserAuthPage() {
     setInitSequence(0);
     setGlobalError('');
     setErrors({});
+    setSuccessMessage('');
     setForm({ name:'', email:'', password:'', password_confirmation:'' });
   };
 
@@ -242,20 +256,40 @@ export default function UserAuthPage() {
                   background: mode === tab.key ? 'linear-gradient(135deg, #7BB342 0%, #9bcf44 100%)' : 'transparent',
                   color: mode === tab.key ? '#fff' : 'var(--text-muted)',
                   boxShadow: mode === tab.key ? '0 8px 20px rgba(123,179,66,0.3)' : 'none',
+                  opacity: isForgot ? 0.5 : 1,
+                  pointerEvents: isForgot ? 'none' : 'auto'
                 }}>
                 {tab.label}
               </button>
             ))}
           </div>
 
+          {isForgot && (
+            <button
+              onClick={() => switchMode('login')}
+              className="hover:text-[var(--brand)] text-[var(--text-muted)] transition-colors inline-flex items-center gap-2 font-black text-[11px] tracking-widest uppercase mb-8"
+            >
+              <ArrowRight size={16} className="rotate-180" /> Back to Sign In
+            </button>
+          )}
+
           <div className="mb-10" style={{ opacity: initSequence >= 2 ? 1 : 0, transition: 'all 0.8s', transform: initSequence >= 2 ? 'translateY(0)' : 'translateY(10px)' }}>
             <h2 className="text-4xl font-black text-[var(--text-primary)] mb-3 tracking-tight">
-              {isLogin ? 'Welcome back.' : 'Join us.'}
+              {isLogin ? 'Welcome back.' : isForgot ? 'Reset Password.' : 'Join us.'}
             </h2>
             <p className="text-[var(--text-secondary)] font-medium">
-              {isLogin ? 'Enter your credentials to access your portal.' : 'Create your account to start connecting.'}
+              {isLogin ? 'Enter your credentials to access your portal.' : 
+               isForgot ? 'Enter your email to receive a reset link.' : 
+               'Create your account to start connecting.'}
             </p>
           </div>
+
+          {successMessage && (
+            <div className="bg-[var(--brand-dim)] border border-[var(--brand)]/30 rounded-2xl p-4 mb-8 flex items-start gap-3 text-[var(--brand)] text-sm font-medium animate-fade-in">
+              <Sparkles size={18} className="flex-shrink-0 mt-0.5" />
+              <span className="leading-relaxed">{successMessage}</span>
+            </div>
+          )}
 
           {globalError && (
             <div className="bg-rose-500/10 border border-rose-500/20 rounded-2xl p-4 mb-8 flex items-start gap-3 text-rose-500 text-sm font-medium animate-fade-in">
@@ -271,10 +305,23 @@ export default function UserAuthPage() {
             )}
 
             <Field label="Email Address" icon={Mail} type="email" value={form.email} onChange={setF('email')} placeholder="student@ista.ma" error={errors.email} />
-            <PasswordField label="Password" value={form.password} onChange={setF('password')} placeholder="••••••••••••" error={errors.password} />
             
-            {!isLogin && (
-              <PasswordField label="Confirm Password" value={form.password_confirmation} onChange={setF('password_confirmation')} placeholder="Repeat password" error={errors.password_confirmation} />
+            {!isForgot && (
+              <>
+                <PasswordField label="Password" value={form.password} onChange={setF('password')} placeholder="••••••••••••" error={errors.password} />
+                
+                {isLogin && (
+                  <div className="flex justify-end -mt-4">
+                    <button type="button" onClick={() => switchMode('forgot')} className="text-[11px] font-black text-[var(--text-muted)] hover:text-[var(--brand)] transition-colors uppercase tracking-wider">
+                      Forgot Password?
+                    </button>
+                  </div>
+                )}
+
+                {!isLogin && (
+                  <PasswordField label="Confirm Password" value={form.password_confirmation} onChange={setF('password_confirmation')} placeholder="Repeat password" error={errors.password_confirmation} />
+                )}
+              </>
             )}
 
             <div className="pt-2" style={{ opacity: initSequence >= 4 ? 1 : 0, transition: 'all 0.8s' }}>
@@ -284,8 +331,8 @@ export default function UserAuthPage() {
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]" />
                 {loading
-                  ? <><Loader2 size={24} className="animate-spin" /> {isLogin ? 'AUTHENTICATING...' : 'CREATING...'}</>
-                  : isLogin ? 'SIGN IN' : 'CREATE ACCOUNT'
+                  ? <><Loader2 size={24} className="animate-spin" /> {isLogin ? 'AUTHENTICATING...' : isForgot ? 'SENDING...' : 'CREATING...'}</>
+                  : isLogin ? 'SIGN IN' : isForgot ? 'SEND RESET LINK' : 'CREATE ACCOUNT'
                 }
               </button>
             </div>

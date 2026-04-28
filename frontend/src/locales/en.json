@@ -36,7 +36,14 @@
     "credentials": "Operational Credentials",
     "error_mismatch": "CRITICAL: AUTH_SYNC_FAILURE. Credential hash mismatch.",
     "sidebar_title": "Strategic Access Terminal",
-    "sidebar_desc": "Providing identity synthesis for ISTA Connect governance layer."
+    "sidebar_desc": "Providing identity synthesis for ISTA Connect governance layer.",
+    "forgot_password": "Forgot Password?",
+    "reset_password": "Reset Password",
+    "enter_email_reset": "Enter your email to receive a reset link.",
+    "reset_sent": "A password reset link has been sent to your email.",
+    "send_link": "Send Reset Link",
+    "sending": "Sending...",
+    "back_to_login": "Back to login"
   },
   "dashboard": {
     "title": "Analytical Overwatch",

@@ -41,6 +41,7 @@ export default function App() {
             {/* Public */}
             <Route path="/login"            element={<UserAuthPage />} />
             <Route path="/register"         element={<UserAuthPage />} />
+            <Route path="/forgot-password"  element={<UserAuthPage />} />
             <Route path="/complete-profile" element={<CompleteProfilePage />} />
 
             {/* ── Admin routes ── */}

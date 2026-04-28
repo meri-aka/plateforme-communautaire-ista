@@ -36,7 +36,14 @@
     "credentials": "Identifiants Opérationnels",
     "error_mismatch": "CRITIQUE : AUTH_SYNC_FAILURE. Incohérence du hash d'identification.",
     "sidebar_title": "Terminal d'Accès Stratégique",
-    "sidebar_desc": "Synthèse d'identité pour la couche de gouvernance ISTA Connect."
+    "sidebar_desc": "Synthèse d'identité pour la couche de gouvernance ISTA Connect.",
+    "forgot_password": "Mot de passe oublié ?",
+    "reset_password": "Réinitialiser le mot de passe",
+    "enter_email_reset": "Entrez votre email pour recevoir un lien de réinitialisation.",
+    "reset_sent": "Un lien de réinitialisation a été envoyé à votre adresse email.",
+    "send_link": "Envoyer le lien",
+    "sending": "Envoi...",
+    "back_to_login": "Retour à la connexion"
   },
   "dashboard": {
     "title": "Supervision Analytique",
