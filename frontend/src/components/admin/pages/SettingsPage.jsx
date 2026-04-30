@@ -30,7 +30,7 @@ function ToggleItem({ label, desc, value, onChange }) {
       <button
         onClick={() => onChange(!value)}
         className="w-11 h-6 rounded-full relative transition-all duration-300 flex-shrink-0"
-        style={{ background: value ? 'var(--brand)' : (theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)') }}
+        style={{ background: value ? 'var(--brand)' : 'var(--bg-card-hover)' }}
       >
         <div className={`absolute top-1 w-4 h-4 rounded-full transition-all duration-300 shadow-md bg-white ${value ? 'left-6' : 'left-1'}`} />
       </button>

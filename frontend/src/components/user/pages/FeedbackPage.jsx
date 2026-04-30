@@ -73,7 +73,7 @@ export default function FeedbackPage() {
              style={{ 
                background: 'var(--bg-card)', 
                border: '1px solid var(--glass-border)',
-               boxShadow: theme === 'dark' ? '0 25px 50px -12px rgba(0,0,0,0.5)' : '0 20px 40px -10px rgba(0,0,0,0.1)',
+               boxShadow: 'var(--shadow-premium)',
                backdropFilter: 'blur(20px)'
              }}>
           

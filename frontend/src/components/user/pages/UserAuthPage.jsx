@@ -19,16 +19,13 @@ const ThemeToggle = () => {
       onClick={toggleTheme}
       className="transition-all hover:scale-105 active:scale-95 z-[100] absolute top-8 right-[140px] w-11 h-11 flex items-center justify-center rounded-xl cursor-pointer"
       style={{
-        background: theme === 'dark' ? 'rgba(123, 179, 66, 0.15)' : 'rgba(74, 124, 35, 0.1)',
-        border: `1px solid ${theme === 'dark' ? 'rgba(123, 179, 66, 0.3)' : 'rgba(74, 124, 35, 0.3)'}`,
-        boxShadow: theme === 'dark' ? '0 0 20px rgba(123, 179, 66, 0.15)' : '0 4px 12px rgba(74, 124, 35, 0.15)',
+        background: 'var(--auth-glow-bg)',
+        border: '1px solid var(--auth-glow-border)',
+        boxShadow: 'var(--auth-glow-shadow)',
       }}
     >
-      {theme === 'dark' ? (
-        <Sun size={20} className="text-[#7BB342]" />
-      ) : (
-        <Moon size={20} className="text-[#4A7C23]" />
-      )}
+      <Sun size={20} className="theme-icon-dark text-[#7BB342]" />
+      <Moon size={20} className="theme-icon-light text-[#4A7C23]" />
     </button>
   );
 };
@@ -40,8 +37,8 @@ const LanguageToggle = () => {
       className="pro-glass transition-all hover:scale-105 active:scale-95 z-[100] absolute top-8 right-8 flex items-center gap-2.5 px-5 py-2.5 rounded-2xl cursor-pointer font-extrabold text-[13px]"
       style={{
         border: '1px solid var(--glass-border)',
-        color: theme === 'dark' ? '#fff' : '#1F2937',
-        background: theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'
+        color: 'var(--text-primary)',
+        background: 'rgba(var(--bg-elevated-rgb), 0.05)' // Or just use a variable
       }}
     >
       <Globe size={18} color="var(--brand)" /> EN
@@ -210,20 +207,22 @@ export default function UserAuthPage() {
       <LanguageToggle />
 
       {/* Visual Side */}
-      <div className="animate-fade-in hidden lg:flex flex-[1.2] relative items-end p-24 overflow-hidden"
-        style={{ background: `url(${visualBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <div className="absolute inset-0" style={{ background: theme === 'dark' ? 'linear-gradient(135deg, rgba(4,6,14,0.2) 0%, rgba(4,6,14,0.98) 100%)' : 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.95) 100%)' }} />
+      <div className="animate-fade-in hidden lg:flex flex-[1.2] relative items-end p-24 overflow-hidden">
+        <img src={bgImage} className="absolute inset-0 w-full h-full object-cover dark:opacity-100 opacity-0 transition-opacity duration-300" alt="" />
+        <img src={bgImageLight} className="absolute inset-0 w-full h-full object-cover dark:opacity-0 opacity-100 transition-opacity duration-300" alt="" />
+        
+        <div className="absolute inset-0" style={{ background: 'var(--auth-overlay)' }} />
         <div className="mesh-bg absolute inset-0 opacity-50" />
         
-        <div className="absolute top-[-100px] left-[-100px] w-[500px] h-[500px] rounded-full blur-[100px] pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(123,179,66,0.15) 0%, transparent 70%)' }}/>
+        <div className="absolute top-[-100px] left-[-100px] w-[500px] h-[500px] rounded-full blur-[100px] pointer-events-none" style={{ background: 'radial-gradient(circle, var(--brand-dim) 0%, transparent 70%)' }}/>
         <div className="absolute bottom-[20%] right-[-100px] w-[400px] h-[400px] rounded-full blur-[80px] pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(212,175,55,0.1) 0%, transparent 70%)' }}/>
 
         <div className="relative z-10 max-w-[600px]">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8" style={{ background: 'rgba(123,179,66,0.15)', border: '1px solid rgba(123,179,66,0.3)' }}>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8" style={{ background: 'var(--auth-glow-bg)', border: '1px solid var(--auth-glow-border)' }}>
              <Sparkles size={16} color="var(--brand)"/>
              <span className="text-[11px] font-black text-[var(--brand)] tracking-widest uppercase">Community First</span>
           </div>
-          <h2 className="text-[56px] font-black mb-6 leading-[1.1] tracking-[-2px]" style={{ color: theme === 'dark' ? '#fff' : '#1F2937' }}>
+          <h2 className="text-[56px] font-black mb-6 leading-[1.1] tracking-[-2px]" style={{ color: 'var(--auth-title-color)' }}>
             Where <span className="bg-gradient-to-r from-[var(--brand)] to-[#D4AF37] bg-clip-text text-transparent">talent</span><br/>meets opportunity.
           </h2>
           <p className="text-[var(--text-secondary)] text-[18px] leading-[1.6] max-w-[480px]">

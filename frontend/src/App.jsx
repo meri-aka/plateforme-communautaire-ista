@@ -25,7 +25,7 @@ import LostFoundPage      from './components/user/pages/LostFoundPage';
 import NotificationsPage  from './components/user/pages/NotificationsPage';
 import SinglePostPage     from './components/user/pages/SinglePostPage';
 import FeedbackPageUser   from './components/user/pages/FeedbackPage';
-
+import MessagesPage from './components/user/pages/MessagesPage';
 // Landing
 import LandingPage from './components/LandingPage';
 
@@ -66,6 +66,8 @@ export default function App() {
               <Route path="/lost-found"    element={<LostFoundPage />} />
               <Route path="/notifications" element={<NotificationsPage />} />
               <Route path="/feedback"      element={<FeedbackPageUser />} />
+              <Route path="/messages"          element={<MessagesPage />} />
+              <Route path="/messages/:userId"  element={<MessagesPage />} />
             </Route>
 
             {/* Catch-all */}

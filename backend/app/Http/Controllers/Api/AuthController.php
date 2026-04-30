@@ -68,11 +68,15 @@ class AuthController extends Controller
         return response()->json(['message' => 'Logged out successfully.']);
     }
 
-    public function me(Request $request)
-    {
-        return response()->json($request->user()->load('filiere'));
-    }
-
+   public function me(Request $request)
+{
+    $user = $request->user()->load('filiere');
+    return response()->json(array_merge($user->toArray(), [
+        'followers_count' => $user->followers()->count(),
+        'following_count' => $user->following()->count(),
+        'is_following'    => false,
+    ]));
+}
     public function updateMe(Request $request)
     {
         $user = $request->user();
@@ -89,4 +93,5 @@ class AuthController extends Controller
             'user'    => $user->fresh()->load('filiere'),
         ]);
     }
+    
 }

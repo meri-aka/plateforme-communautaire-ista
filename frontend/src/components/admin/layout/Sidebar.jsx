@@ -83,7 +83,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
             width: isCollapsed ? '44px' : '52px',
             height: isCollapsed ? '44px' : '52px',
             borderRadius: '14px',
-            background: theme === 'dark' ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.03)',
+            background: 'var(--sidebar-accent-bg)',
             border: `1px solid ${T_COLORS.border}`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             flexShrink: 0, overflow: 'hidden', position: 'relative',
@@ -91,7 +91,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
           }}>
             <BrandLogo size={isCollapsed ? 32 : 42} />
             {!isCollapsed && (
-              <div style={{ position: 'absolute', inset: 0, boxShadow: theme === 'dark' ? 'inset 0 0 10px rgba(123, 179, 66, 0.1)' : 'inset 0 0 10px rgba(74, 124, 35, 0.1)' }} />
+              <div style={{ position: 'absolute', inset: 0, boxShadow: 'var(--sidebar-glow)' }} />
             )}
           </div>
 
@@ -118,7 +118,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
           <button 
             onClick={() => setIsCollapsed(true)}
             className="lg:flex hidden items-center justify-center w-8 h-8 rounded-lg text-[var(--text-muted)] hover:text-brand transition-all border border-[var(--glass-border)]"
-            style={{ background: theme === 'dark' ? 'transparent' : 'rgba(0,0,0,0.03)' }}
+            style={{ background: 'var(--sidebar-accent-bg)' }}
             title={t('nav.collapse')}
           >
             <ChevronLeft size={16} />
@@ -157,9 +157,9 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
                     textDecoration: 'none',
                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     color: isActive ? T_COLORS.text1 : T_COLORS.text2,
-                    background: isActive ? (theme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)') : 'transparent',
-                    border: `1px solid ${isActive ? (theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)') : 'transparent'}`,
-                    boxShadow: isActive ? (theme === 'dark' ? '0 10px 20px -5px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.08)') : 'none',
+                    background: isActive ? 'var(--nav-active-bg)' : 'transparent',
+                    border: `1px solid ${isActive ? 'var(--nav-active-border)' : 'transparent'}`,
+                    boxShadow: isActive ? 'var(--nav-active-shadow)' : 'none',
                     justifyContent: isCollapsed ? 'center' : 'flex-start'
                   })}
                 >
@@ -197,7 +197,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
       </nav>
 
       {/* ── Footer Section ── */}
-      <div style={{ padding: '24px 14px', borderTop: `1px solid ${T_COLORS.border}`, background: theme === 'dark' ? 'rgba(0,0,0,0.1)' : 'rgba(0,0,0,0.03)' }}>
+      <div style={{ padding: '24px 14px', borderTop: `1px solid ${T_COLORS.border}`, background: 'var(--sidebar-footer-bg)' }}>
         <div className="pro-card" style={{
           display: 'flex', alignItems: 'center',
           gap: isCollapsed ? '0' : '14px',

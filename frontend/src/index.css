@@ -5,42 +5,79 @@
 @tailwind utilities;
 
 :root {
-  --bg-main: #06080B;
-  --bg-card: #0D1117;
-  --bg-card-hover: #161B22;
-  --bg-elevated: #161B22;
-  --text-primary: #F0F6FC;
-  --text-secondary: #8B949E;
-  --text-muted: #484F58;
+  --transition-speed: 0.3s;
+  --font-main: 'Inter', system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+}
+
+[data-theme="dark"], :root:not([data-theme="light"]) {
+  --bg-main: #0F1117;
+  --bg-card: #161A23;
+  --bg-card-hover: #1C212D;
+  --bg-elevated: #1A1F29;
+  --text-primary: #F4F5F7;
+  --text-secondary: #9CA3AF;
+  --text-muted: #6B7280;
   --brand: #84CC27;
-  --brand-dim: rgba(132, 204, 39, 0.1);
-  --brand-glow: rgba(132, 204, 39, 0.2);
+  --brand-dim: rgba(132, 204, 39, 0.15);
+  --brand-glow: rgba(132, 204, 39, 0.25);
   --accent-gold: #D4AF37;
-  --border-subtle: rgba(240, 246, 252, 0.1);
-  --border-active: rgba(240, 246, 252, 0.2);
-  --glass-bg: rgba(13, 17, 23, 0.7);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-active: rgba(255, 255, 255, 0.12);
+  --glass-bg: rgba(22, 26, 35, 0.9);
   --glass-border: rgba(255, 255, 255, 0.08);
   --shadow-premium: 0 20px 40px -12px rgba(0, 0, 0, 0.5);
+  
+  /* Auth Specifics */
+  --auth-glow-bg: rgba(132, 204, 39, 0.15);
+  --auth-glow-border: rgba(132, 204, 39, 0.3);
+  --auth-glow-shadow: 0 0 20px rgba(132, 204, 39, 0.15);
+  --auth-overlay: linear-gradient(135deg, rgba(15, 17, 23, 0.2) 0%, rgba(15, 17, 23, 0.98) 100%);
+  --login-hero-overlay: linear-gradient(rgba(15, 17, 23, 0.3), rgba(15, 17, 23, 0.9));
+  --sidebar-bg: rgba(0,0,0,0.1);
+  --sidebar-accent-bg: rgba(255,255,255,0.02);
+  --sidebar-footer-bg: rgba(0,0,0,0.1);
+  --sidebar-glow: inset 0 0 10px rgba(132, 204, 39, 0.1);
+  --nav-active-bg: rgba(255, 255, 255, 0.05);
+  --nav-active-border: rgba(255, 255, 255, 0.1);
+  --nav-active-shadow: 0 10px 20px -5px rgba(0,0,0,0.3);
+  --overlay-mesh: rgba(132, 204, 39, 0.05);
 }
 
 [data-theme="light"] {
-  --bg-main: #F6F8FA;
+  --bg-main: #F3F4F6;
   --bg-card: #FFFFFF;
-  --bg-card-hover: #F3F4F6;
+  --bg-card-hover: #E5E7EB;
   --bg-elevated: #FFFFFF;
-  --text-primary: #1F2328;
-  --text-secondary: #57606A;
-  --text-muted: #6E7781;
+  --text-primary: #0F1117;
+  --text-secondary: #1F2937;
+  --text-muted: #4B5563;
   --brand: #4A7C23;
-  --brand-dim: rgba(74, 124, 35, 0.08);
-  --brand-glow: rgba(74, 124, 35, 0.12);
+  --brand-dim: rgba(74, 124, 35, 0.12);
+  --brand-glow: rgba(74, 124, 35, 0.15);
   --accent-gold: #B8860B;
-  --border-subtle: rgba(31, 35, 40, 0.12);
-  --border-active: rgba(31, 35, 40, 0.2);
-  --glass-bg: rgba(255, 255, 255, 0.8);
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-active: rgba(0, 0, 0, 0.16);
+  --glass-bg: rgba(255, 255, 255, 0.95);
   --glass-border: rgba(0, 0, 0, 0.08);
   --shadow-premium: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
+
+  /* Auth Specifics */
+  --auth-glow-bg: rgba(74, 124, 35, 0.1);
+  --auth-glow-border: rgba(74, 124, 35, 0.3);
+  --auth-glow-shadow: 0 4px 12px rgba(74, 124, 35, 0.15);
+  --auth-overlay: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.95) 100%);
+  --login-hero-overlay: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.85));
+  --sidebar-bg: rgba(0,0,0,0.03);
+  --sidebar-accent-bg: rgba(0,0,0,0.03);
+  --sidebar-footer-bg: rgba(0,0,0,0.03);
+  --sidebar-glow: inset 0 0 10px rgba(74, 124, 35, 0.1);
+  --nav-active-bg: rgba(0, 0, 0, 0.05);
+  --nav-active-border: rgba(0, 0, 0, 0.1);
+  --nav-active-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  --overlay-mesh: rgba(74, 124, 35, 0.05);
 }
+
 
 @layer base {
   * { box-sizing: border-box; }
@@ -126,6 +163,12 @@
     pointer-events: none;
   }
   .avatar-img { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border-subtle); }
+  
+  /* Theme Utilities */
+  .theme-icon-dark { display: none !important; }
+  .theme-icon-light { display: block !important; }
+  [data-theme="dark"] .theme-icon-dark { display: block !important; }
+  [data-theme="dark"] .theme-icon-light { display: none !important; }
 }
 
 @keyframes spin {

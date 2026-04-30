@@ -74,17 +74,14 @@ export default function LoginPage() {
         width: '44px', height: '44px',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         borderRadius: '12px', cursor: 'pointer',
-        background: theme === 'dark' ? 'rgba(123, 179, 66, 0.15)' : 'rgba(74, 124, 35, 0.1)',
-        border: `1px solid ${theme === 'dark' ? 'rgba(123, 179, 66, 0.3)' : 'rgba(74, 124, 35, 0.3)'}`,
+        background: 'var(--auth-glow-bg)',
+        border: '1px solid var(--auth-glow-border)',
         color: 'var(--brand)',
-        boxShadow: theme === 'dark' ? '0 0 20px rgba(123, 179, 66, 0.15)' : '0 4px 12px rgba(74, 124, 35, 0.15)',
+        boxShadow: 'var(--auth-glow-shadow)',
       }}
     >
-      {theme === 'dark' ? (
-        <Sun size={20} className="text-[#7BB342] drop-shadow-[0_0_8px_rgba(123,179,66,0.8)]" />
-      ) : (
-        <Moon size={20} className="text-[#4A7C23] drop-shadow-[0_0_8px_rgba(74,124,35,0.8)]" />
-      )}
+      <Sun size={20} className="theme-icon-dark text-[#7BB342] drop-shadow-[0_0_8px_rgba(123,179,66,0.8)]" />
+      <Moon size={20} className="theme-icon-light text-[#4A7C23] drop-shadow-[0_0_8px_rgba(74,124,35,0.8)]" />
     </button>
   );
 
@@ -96,8 +93,8 @@ export default function LoginPage() {
         position: 'absolute', top: '32px', right: '32px', zIndex: 100,
         display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 20px',
         borderRadius: '16px', border: '1px solid var(--glass-border)',
-        color: theme === 'dark' ? '#fff' : '#1F2937', fontWeight: 800, fontSize: '13px', cursor: 'pointer',
-        background: theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'
+        color: 'var(--text-primary)', fontWeight: 800, fontSize: '13px', cursor: 'pointer',
+        background: 'rgba(var(--bg-elevated-rgb), 0.05)'
       }}
     >
       <Globe size={18} color="var(--brand)" />
@@ -106,14 +103,15 @@ export default function LoginPage() {
   );
 
   if (!showForm) {
-    const currentBg = theme === 'dark' ? bgImage : bgImageLight;
-    const overlayColor = theme === 'dark' ? 'rgba(4,6,14,0.3), rgba(4,6,14,0.9)' : 'rgba(255,255,255,0.1), rgba(255,255,255,0.85)';
     return (
       <div style={{
         minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: `linear-gradient(${overlayColor}), url(${currentBg})`,
-        backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative', overflow: 'hidden'
+        position: 'relative', overflow: 'hidden'
       }}>
+        <img src={bgImage} className="absolute inset-0 w-full h-full object-cover dark:opacity-100 opacity-0 transition-opacity duration-300" alt="" />
+        <img src={bgImageLight} className="absolute inset-0 w-full h-full object-cover dark:opacity-0 opacity-100 transition-opacity duration-300" alt="" />
+        
+        <div style={{ position: 'absolute', inset: 0, background: 'var(--login-hero-overlay)' }} />
         <div className="mesh-bg" />
         <ThemeToggle />
         <LanguageToggle />
@@ -121,7 +119,7 @@ export default function LoginPage() {
         <div className="animate-fade-in" style={{ position: 'absolute', top: '32px', left: '32px', display: 'flex', alignItems: 'center', gap: '16px', zIndex: 100 }}>
           <BrandLogo size={42} />
           <div>
-            <h2 style={{ fontSize: '18px', fontWeight: 900, color: theme === 'dark' ? '#fff' : '#1F2937', letterSpacing: '-0.5px', margin: 0, lineHeight: 1.1 }}>
+            <h2 style={{ fontSize: '18px', fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '-0.5px', margin: 0, lineHeight: 1.1 }}>
               ISTA<span style={{ color: 'var(--brand)' }}>Connect</span>
             </h2>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
@@ -144,7 +142,7 @@ export default function LoginPage() {
           </div>
 
           <p style={{ fontSize: '11px', fontWeight: 900, color: 'var(--brand)', textTransform: 'uppercase', letterSpacing: '0.6em', marginBottom: '20px' }}>{t('login.node_access')}</p>
-          <h1 style={{ fontSize: '92px', fontWeight: 900, color: theme === 'dark' ? '#fff' : '#1F2937', letterSpacing: '-5px', margin: '0 0 28px', lineHeight: 0.85 }}>
+          <h1 style={{ fontSize: '92px', fontWeight: 900, color: 'var(--text-primary)', letterSpacing: '-5px', margin: '0 0 28px', lineHeight: 0.85 }}>
             ISTA<span style={{ color: 'var(--brand)' }}>Connect</span>
           </h1>
           <p style={{ fontSize: '22px', color: 'var(--text-secondary)', margin: '0 0 64px', lineHeight: 1.5, fontWeight: 400, maxWidth: '680px', marginInline: 'auto' }}>
@@ -156,8 +154,8 @@ export default function LoginPage() {
             className="pro-glass transition-all hover:scale-105 active:scale-95"
             style={{
               padding: '24px 72px', borderRadius: '24px', fontSize: '20px', fontWeight: 900,
-              color: theme === 'dark' ? '#fff' : '#1F2937', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '20px',
-              border: '1px solid var(--brand)', background: 'rgba(123, 179, 66, 0.1)',
+              color: 'var(--text-primary)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '20px',
+              border: '1px solid var(--brand)', background: 'var(--auth-glow-bg)',
               boxShadow: '0 25px 60px -15px var(--brand-glow)'
             }}
           >
@@ -178,12 +176,13 @@ export default function LoginPage() {
       `}</style>
 
       {/* Visual Side */}
-      <div className="animate-fade-in hidden lg:flex flex-[1.5] relative items-end p-24 overflow-hidden"
-        style={{ background: `url(${visualBg})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-        <div style={{ position: 'absolute', inset: 0, background: theme === 'dark' ? 'linear-gradient(135deg, rgba(4,6,14,0.1) 0%, rgba(4,6,14,0.95) 100%)' : 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.85) 100%)' }} />
+      <div className="animate-fade-in hidden lg:flex flex-[1.5] relative items-end p-24 overflow-hidden">
+        <img src={bgImage} className="absolute inset-0 w-full h-full object-cover dark:opacity-100 opacity-0 transition-opacity duration-300" alt="" />
+        <img src={bgImageLight} className="absolute inset-0 w-full h-full object-cover dark:opacity-0 opacity-100 transition-opacity duration-300" alt="" />
+        <div style={{ position: 'absolute', inset: 0, background: 'var(--auth-overlay)' }} />
         <div className="mesh-bg absolute inset-0" />
         <div style={{ position: 'relative', maxWidth: '600px' }}>
-          <h2 style={{ fontSize: '64px', fontStyle: 'italic', fontWeight: 900, color: theme === 'dark' ? '#fff' : '#1F2937', margin: '0 0 24px', lineHeight: 1, letterSpacing: '-4px' }}>
+          <h2 style={{ fontSize: '64px', fontStyle: 'italic', fontWeight: 900, color: 'var(--text-primary)', margin: '0 0 24px', lineHeight: 1, letterSpacing: '-4px' }}>
             {t('login.sidebar_title')}
           </h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: '18px', lineHeight: 1.6 }}>{t('login.sidebar_desc')}</p>

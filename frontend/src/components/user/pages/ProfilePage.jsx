@@ -52,14 +52,25 @@ export default function ProfilePage() {
   }, [id, isOwnProfile, me?.id]);
 
   const toggleFollow = async () => {
-    if (followLoading) return;
-    setFollowLoading(true);
-    const prev = following;
-    setFollowing(!prev);
-    try { await api.post(`/users/${id}/follow`); }
-    catch { setFollowing(prev); }
-    setFollowLoading(false);
-  };
+  if (followLoading) return;
+  setFollowLoading(true);
+  const prev = following;
+  setFollowing(!prev);
+  try {
+    const res = await api.post(`/users/${id}/follow`);
+    setFollowing(res.data.following);
+    // update followers count
+    setProfile(p => ({
+      ...p,
+      followers_count: res.data.following
+        ? (p.followers_count ?? 0) + 1
+        : (p.followers_count ?? 1) - 1,
+    }));
+  } catch {
+    setFollowing(prev);
+  }
+  setFollowLoading(false);
+};
 
   if (loading) return (
     <div style={{ display:'flex', justifyContent:'center', alignItems:'center', minHeight:'60vh' }}>

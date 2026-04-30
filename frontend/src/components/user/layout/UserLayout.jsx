@@ -3,7 +3,7 @@ import { NavLink, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import {
   Home, Search, Bell, User, PackageSearch, LogOut,
-  Menu, X, MessageSquare, Settings, ChevronRight
+  Menu, X, MessageSquare, MessageCircle, Settings, ChevronRight
 } from 'lucide-react';
 import api from '../../../api/axios';
 import BrandLogo from '../../admin/common/BrandLogo';
@@ -13,11 +13,19 @@ export default function UserLayout({ children }) {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [notifCount, setNotifCount] = useState(0);
+  const [msgCount, setMsgCount] = useState(0);
 
   useEffect(() => {
+    // Notifications unread count
     api.get('/notifications').then(res => {
-      const unread = (res.data?.data ?? res.data ?? []).filter(n => !n.read_at).length;
-      setNotifCount(unread);
+      const data = res.data?.data ?? res.data ?? [];
+      setNotifCount(data.filter(n => !n.is_read).length);
+    }).catch(() => {});
+
+    // Messages unread count
+    api.get('/messages').then(res => {
+      const total = (res.data ?? []).reduce((sum, c) => sum + (c.unread ?? 0), 0);
+      setMsgCount(total);
     }).catch(() => {});
   }, []);
 
@@ -27,11 +35,12 @@ export default function UserLayout({ children }) {
   };
 
   const navItems = [
-    { to: '/',              icon: Home,          label: 'Feed'          },
-    { to: '/lost-found',    icon: PackageSearch,  label: 'Lost & Found'  },
-    { to: '/notifications', icon: Bell,           label: 'Notifications', badge: notifCount },
-    { to: '/feedback',      icon: MessageSquare,  label: 'Feedback'      },
-    { to: '/profile',       icon: User,           label: 'Profile'       },
+    { to: '/',              icon: Home,           label: 'Feed'          },
+    { to: '/lost-found',    icon: PackageSearch,   label: 'Lost & Found'  },
+    { to: '/messages',      icon: MessageCircle,   label: 'Messages',     badge: msgCount },
+    { to: '/notifications', icon: Bell,            label: 'Notifications', badge: notifCount },
+    { to: '/feedback',      icon: MessageSquare,   label: 'Feedback'      },
+    { to: '/profile',       icon: User,            label: 'Profile'       },
   ];
 
   const avatarUrl = user?.avatar
@@ -45,9 +54,7 @@ export default function UserLayout({ children }) {
       fontFamily: 'Inter, system-ui, sans-serif',
     }}>
 
-      {/* ══════════════════════════════════════
-          MOBILE TOPBAR (< md)
-      ══════════════════════════════════════ */}
+      {/* ── MOBILE TOPBAR ── */}
       <header style={{
         display: 'none',
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200,
@@ -69,32 +76,20 @@ export default function UserLayout({ children }) {
         </button>
       </header>
 
-      {/* ══════════════════════════════════════
-          3-COLUMN LAYOUT WRAPPER
-      ══════════════════════════════════════ */}
+      {/* ── 3-COLUMN LAYOUT ── */}
       <div style={{
-        maxWidth: '1280px',
-        margin: '0 auto',
-        display: 'grid',
-        gridTemplateColumns: '260px 1fr 300px',
-        gap: '0',
-        minHeight: '100vh',
-        padding: '0',
+        maxWidth: '1280px', margin: '0 auto',
+        display: 'grid', gridTemplateColumns: '260px 1fr 300px',
+        gap: '0', minHeight: '100vh', padding: '0',
       }} className="layout-grid">
 
-        {/* ══════════════════════════════════════
-            LEFT SIDEBAR
-        ══════════════════════════════════════ */}
+        {/* LEFT SIDEBAR */}
         <aside style={{
-          position: 'sticky',
-          top: 0,
-          height: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
+          position: 'sticky', top: 0, height: '100vh',
+          display: 'flex', flexDirection: 'column',
           padding: '24px 16px',
           borderRight: '1px solid var(--border-subtle)',
         }}>
-
           {/* Brand */}
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '36px', padding: '0 8px' }}>
             <div style={{
@@ -120,8 +115,7 @@ export default function UserLayout({ children }) {
                   color: isActive ? 'var(--brand)' : 'var(--text-secondary)',
                   background: isActive ? 'rgba(123,179,66,0.1)' : 'transparent',
                   border: isActive ? '1px solid rgba(123,179,66,0.15)' : '1px solid transparent',
-                  transition: 'all 0.15s',
-                  position: 'relative',
+                  transition: 'all 0.15s', position: 'relative',
                 })}
                 onMouseEnter={e => { if (!e.currentTarget.style.background.includes('123')) e.currentTarget.style.background = 'var(--bg-card-hover)'; }}
                 onMouseLeave={e => { if (!e.currentTarget.style.background.includes('123')) e.currentTarget.style.background = 'transparent'; }}
@@ -143,13 +137,10 @@ export default function UserLayout({ children }) {
             ))}
           </nav>
 
-          {/* User Card at bottom */}
+          {/* User Card */}
           <div style={{
-            marginTop: 'auto',
-            padding: '12px',
-            borderRadius: '14px',
-            background: 'var(--bg-card)',
-            border: '1px solid var(--border-subtle)',
+            marginTop: 'auto', padding: '12px', borderRadius: '14px',
+            background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
             display: 'flex', alignItems: 'center', gap: '10px',
           }}>
             <img src={avatarUrl} alt="avatar"
@@ -167,8 +158,7 @@ export default function UserLayout({ children }) {
                 background: 'none', border: 'none', cursor: 'pointer',
                 color: 'var(--text-muted)', padding: '4px', borderRadius: '6px',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                transition: 'color 0.15s',
-                flexShrink: 0,
+                transition: 'color 0.15s', flexShrink: 0,
               }}
               onMouseEnter={e => e.currentTarget.style.color = '#F43F5E'}
               onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
@@ -178,9 +168,7 @@ export default function UserLayout({ children }) {
           </div>
         </aside>
 
-        {/* ══════════════════════════════════════
-            MAIN FEED
-        ══════════════════════════════════════ */}
+        {/* MAIN */}
         <main style={{
           minHeight: '100vh',
           borderRight: '1px solid var(--border-subtle)',
@@ -189,20 +177,13 @@ export default function UserLayout({ children }) {
           {children}
         </main>
 
-        {/* ══════════════════════════════════════
-            RIGHT SIDEBAR
-        ══════════════════════════════════════ */}
+        {/* RIGHT SIDEBAR */}
         <aside style={{
-          position: 'sticky',
-          top: 0,
-          height: '100vh',
+          position: 'sticky', top: 0, height: '100vh',
           padding: '24px 16px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '20px',
+          display: 'flex', flexDirection: 'column', gap: '20px',
           overflowY: 'auto',
         }}>
-
           {/* Search */}
           <div style={{
             display: 'flex', alignItems: 'center', gap: '10px',
@@ -210,14 +191,11 @@ export default function UserLayout({ children }) {
             borderRadius: '12px', padding: '10px 14px',
           }}>
             <Search size={15} color="var(--text-muted)" />
-            <input
-              placeholder="Rechercher..."
+            <input placeholder="Rechercher..."
               style={{
                 background: 'none', border: 'none', outline: 'none',
-                fontSize: '13px', color: 'var(--text-primary)', flex: 1,
-                fontFamily: 'inherit',
-              }}
-            />
+                fontSize: '13px', color: 'var(--text-primary)', flex: 1, fontFamily: 'inherit',
+              }} />
           </div>
 
           {/* Community Stats */}
@@ -225,20 +203,16 @@ export default function UserLayout({ children }) {
             background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
             borderRadius: '16px', padding: '16px', overflow: 'hidden', position: 'relative',
           }}>
-            <div style={{
-              position: 'absolute', top: '-20px', right: '-20px',
-              width: '80px', height: '80px', borderRadius: '50%',
-              background: 'rgba(123,179,66,0.08)', pointerEvents: 'none',
-            }} />
+            <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(123,179,66,0.08)', pointerEvents: 'none' }} />
             <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '14px' }}>
               Communauté
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               {[
                 { val: '1.2k', label: 'Étudiants' },
-                { val: '45', label: 'Formateurs' },
-                { val: '12', label: 'Filières' },
-                { val: '98%', label: 'Actifs' },
+                { val: '45',   label: 'Formateurs' },
+                { val: '12',   label: 'Filières' },
+                { val: '98%',  label: 'Actifs' },
               ].map(s => (
                 <div key={s.label} style={{
                   background: 'var(--bg-main)', borderRadius: '10px', padding: '10px 12px',
@@ -261,10 +235,11 @@ export default function UserLayout({ children }) {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
               {[
-                { label: 'Mon Profil', to: '/profile', icon: User },
-                { label: 'Objets Perdus', to: '/lost-found', icon: PackageSearch },
-                { label: 'Notifications', to: '/notifications', icon: Bell },
-                { label: 'Feedback', to: '/feedback', icon: MessageSquare },
+                { label: 'Mon Profil',    to: '/profile',       icon: User          },
+                { label: 'Messages',      to: '/messages',      icon: MessageCircle },
+                { label: 'Objets Perdus', to: '/lost-found',    icon: PackageSearch },
+                { label: 'Notifications', to: '/notifications', icon: Bell          },
+                { label: 'Feedback',      to: '/feedback',      icon: MessageSquare },
               ].map(({ label, to, icon: Icon }) => (
                 <Link key={to} to={to} style={{
                   display: 'flex', alignItems: 'center', gap: '10px',
@@ -283,7 +258,7 @@ export default function UserLayout({ children }) {
             </div>
           </div>
 
-          {/* Footer links */}
+          {/* Footer */}
           <div style={{ marginTop: 'auto', paddingTop: '8px' }}>
             <div style={{ fontSize: '10px', color: 'var(--text-muted)', lineHeight: 1.8 }}>
               © 2025 ISTAConnect · <span style={{ cursor: 'pointer' }}>Confidentialité</span> · <span style={{ cursor: 'pointer' }}>Conditions</span>
@@ -292,15 +267,12 @@ export default function UserLayout({ children }) {
         </aside>
       </div>
 
-      {/* ══════════════════════════════════════
-          MOBILE DRAWER
-      ══════════════════════════════════════ */}
+      {/* MOBILE DRAWER */}
       {mobileOpen && (
         <div style={{
           position: 'fixed', top: '60px', left: 0, right: 0, bottom: 0, zIndex: 199,
           background: 'var(--bg-card)', padding: '16px',
-          borderTop: '1px solid var(--border-subtle)',
-          overflowY: 'auto',
+          borderTop: '1px solid var(--border-subtle)', overflowY: 'auto',
         }} className="mobile-drawer">
           {navItems.map(({ to, icon: Icon, label, badge }) => (
             <NavLink key={to} to={to} end={to === '/'}
@@ -341,27 +313,14 @@ export default function UserLayout({ children }) {
 
       <style>{`
         @media (max-width: 1024px) {
-          .layout-grid {
-            grid-template-columns: 220px 1fr !important;
-          }
-          .layout-grid aside:last-child {
-            display: none !important;
-          }
+          .layout-grid { grid-template-columns: 220px 1fr !important; }
+          .layout-grid aside:last-child { display: none !important; }
         }
         @media (max-width: 768px) {
-          .layout-grid {
-            grid-template-columns: 1fr !important;
-          }
-          .layout-grid aside:first-child {
-            display: none !important;
-          }
-          .layout-grid main {
-            padding: 80px 16px 24px !important;
-            border-right: none !important;
-          }
-          .mobile-topbar {
-            display: flex !important;
-          }
+          .layout-grid { grid-template-columns: 1fr !important; }
+          .layout-grid aside:first-child { display: none !important; }
+          .layout-grid main { padding: 80px 16px 24px !important; border-right: none !important; }
+          .mobile-topbar { display: flex !important; }
         }
       `}</style>
     </div>
