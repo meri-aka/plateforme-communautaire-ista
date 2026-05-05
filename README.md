@@ -26,7 +26,7 @@ A full-stack community platform for ISTA trainees built with Laravel 11 + React 
 ---
 
 ## 📁 Project Structure
-
+```bash
 plateforme-communautaire-ista/
 │
 ├── backend/                        # Laravel 11 REST API
@@ -73,6 +73,8 @@ plateforme-communautaire-ista/
         ├── utils/                              # Utility functions(PDF export, helpers)
         ├── App.jsx                             # Main routes configuration
         └── main.jsx                            # React application entry point   
+```
+
 ## 🚀 Getting Started
 
 ### Prerequisites
