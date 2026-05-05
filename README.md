@@ -45,34 +45,35 @@ plateforme-communautaire-ista/
 │   │
 │   ├── storage/                    # Uploaded files
 │   ├── .env.example                # Environment template
-│   └── db.sql                      # Database dump (optional)
+│   └── db.sql                      # Database dump
 │
 └── frontend/                       # React + Vite SPA
     └── src/
-        ├── api/                    # Axios configuration for API requests
-        ├── assets/                 # Images, icons, and static assets
-        │
+        ├── api/                            # Axios configuration for API requests
+        ├── assets/                         # Images, icons, and static assets
         ├── components/
-        │   ├── admin/              # Admin panel components
-        │   │   ├── common/         # Reusable admin components
-        │   │   ├── layout/                   # Admin layout (Navbar, Sidebar)
-        │   │   ├── pages/                      # Admin pages
-        │   │   └── Dashboard.jsx               # Admin dashboard main component
+        │   ├── admin/                      # Admin panel components
+        │   │   ├── common/                 # Reusable admin components
+        │   │   ├── layout/                 # Admin layout (Navbar, Sidebar)
+        │   │   ├── pages/                  # Admin pages
+        │   │   └── Dashboard.jsx           # Admin dashboard main component
         │   │
-        │   └── user/                           # User interface components
-        │       ├── layout/                     # User layout components
-        │       ├── pages/                      # User pages (feed, profile, etc.)
-        │       ├── LandingPage.jsx             # Public landing page
-        │       ├── ProtectedRoute.jsx          # Route protection component
-        │       └── UserProtectedRoute.jsx      # User-specific route guard
+        │   ├── user/                       # User interface components
+        │   │   ├── layout/                 # User layout components
+        │   │   ├── pages/                  # User pages (feed, profile, etc.)
+        │   │   └── UserProtectedRoute.jsx  # User-specific route guard
+        │   │
+        │   ├── LandingPage.jsx             # Public landing page
+        │   └── ProtectedRoute.jsx          # Route protection component
         │
-        ├── context/                            # React contexts(AuthContext,ThemeContext)
-        ├── hooks/                              # Custom React hooks
-        ├── locales/                            # i18n translations (en, fr)
-        ├── pages/                              # Route-level pages
-        ├── utils/                              # Utility functions(PDF export, helpers)
-        ├── App.jsx                             # Main routes configuration
-        └── main.jsx                            # React application entry point   
+        ├── context/                        # React contexts (AuthContext, ThemeContext)
+        ├── hooks/                          # Custom React hooks
+        ├── locales/                        # i18n translations (en, fr)
+        ├── utils/                          # Utility functions
+        ├── App.jsx                         # Main routes configuration
+        ├── main.jsx                        # React application entry point
+        ├── i18n.js                         # i18n configuration
+        └── index.css                       # Global styles
 ```
 
 ## 🚀 Getting Started
