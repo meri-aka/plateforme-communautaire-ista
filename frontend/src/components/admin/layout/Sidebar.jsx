@@ -33,6 +33,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
         { icon: LayoutDashboard, label: t('nav.overview'),    to: '/admin',           end: true },
         { icon: Users,           label: t('nav.users'),       to: '/admin/users',     badge: { n: '2.4K', color: 'brand' } },
         { icon: FileText,        label: t('nav.posts'),       to: '/admin/posts',     badge: { n: '14',   color: 'rose'  } },
+        { icon: Users,           label: t('nav.groups'),      to: '/admin/groups' },
       ],
     },
     {

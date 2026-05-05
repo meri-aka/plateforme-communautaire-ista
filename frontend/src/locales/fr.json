@@ -11,7 +11,8 @@
     "logout": "Déconnexion",
     "collapse": "Réduire le menu",
     "expand": "Agrandir le menu",
-    "admin": "Admin"
+    "admin": "Admin",
+    "groups": "Groupes"
   },
   "sections": {
     "analytics": "Analytique & Modération",
@@ -100,6 +101,7 @@
       "pending": "En attente",
       "restricted": "Restreints"
     },
+    
     "actions": {
       "export": "Exporter les données",
       "invite": "Inviter un membre"
@@ -118,7 +120,9 @@
       "inactive": "Inactif"
     },
     "roles": {
-      "admin": "Admin"
+      "admin": "Admin",
+      "trainee": "Stagiaire",
+      "trainer": "Formateur"
     },
     "fields": {
       "dev": "Développement Digital",

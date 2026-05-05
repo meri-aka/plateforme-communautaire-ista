@@ -11,7 +11,8 @@
     "logout": "Logout",
     "collapse": "Collapse Menu",
     "expand": "Expand Menu",
-    "admin": "Admin"
+    "admin": "Admin",
+    "groups": "Groups"
   },
   "sections": {
     "analytics": "Analytics & Moderation",
@@ -118,7 +119,9 @@
       "inactive": "Inactive"
     },
     "roles": {
-      "admin": "Admin"
+      "admin": "Admin",
+      "trainee": "Trainee",
+      "trainer": "Trainer"
     },
     "fields": {
       "dev": "Digital Development",

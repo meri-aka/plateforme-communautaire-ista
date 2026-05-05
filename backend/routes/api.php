@@ -73,6 +73,19 @@ Route::middleware('auth:sanctum')->group(function () {
         ]));
     });
 
+    Route::get('users/online', function (Request $request) {
+    $users = \App\Models\User::where('id', '!=', $request->user()->id)
+        ->whereNotNull('last_seen')
+        ->orderBy('last_seen', 'desc')
+        ->select('id', 'name', 'avatar', 'role', 'last_seen')
+        ->limit(5)
+        ->get()
+        ->map(fn($u) => array_merge($u->toArray(), [
+            'is_online' => $u->last_seen->gt(now()->subMinutes(5))
+        ]));
+    return response()->json($users);
+});
+
     Route::post('users/{user}/follow', [FollowController::class, 'toggle']);
 
     // Posts
@@ -121,6 +134,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('claims/{claim}',       [ClaimController::class, 'update']);
         Route::get('reports',                [ReportController::class, 'index']);
         Route::patch('reports/{report}',     [ReportController::class, 'update']);
+        
+        Route::get('admin/groups',           [AdminController::class, 'groups']);
+        Route::get('admin/groups/{group}',   [AdminController::class, 'showGroup']);
+        Route::delete('admin/groups/{group}',[AdminController::class, 'destroyGroup']);
 
         // Users management
         Route::get('admin/users',            [UserController::class, 'index']);

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+use App\Models\Group;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -44,6 +45,10 @@ class AdminController extends Controller
             'reports' => [
                 'total'    => Report::count(),
                 'pending'  => Report::where('status', 'pending')->count(),
+            ],
+            'groups' => [
+            'total'   => Group::count(),
+            'members' => Group::withCount('members')->get()->sum('members_count'),
             ],
         ]);
     }
@@ -127,4 +132,26 @@ class AdminController extends Controller
             'settings' => $settings,
         ]);
     }
+
+
+public function groups(Request $request)
+{
+    $groups = \App\Models\Group::with(['creator', 'members.filiere'])
+        ->withCount('members')
+        ->latest()
+        ->paginate(20);
+
+    return response()->json($groups);
+}
+
+public function showGroup(\App\Models\Group $group)
+{
+    return response()->json($group->load(['creator', 'members.filiere', 'messages.user']));
+}
+
+public function destroyGroup(\App\Models\Group $group)
+{
+    $group->delete();
+    return response()->json(['message' => 'Group deleted.']);
+}
 }

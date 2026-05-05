@@ -1,7 +1,8 @@
+import { useState, useEffect } from 'react';
 import { 
   Users, FileText, MessageSquare, TrendingUp, 
   ArrowUpRight, ArrowDownRight, Activity, 
-  Calendar, Download, Cpu, Network, Brain
+  Calendar, Download, Cpu, Network, Brain, Circle
 } from 'lucide-react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, 
@@ -12,15 +13,99 @@ import AdminLayout from './layout/AdminLayout';
 import useCountUp from '../../hooks/useCountUp.jsx';
 import useAdminStats from '../../hooks/useAdminStats';
 import { exportStatsPDF } from '../../utils/exportPDF';
+import api from '../../api/axios';
+
+const avatarUrl = (u) =>
+  u?.avatar ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(u?.name ?? 'U')}&background=7BB342&color=fff&size=128`;
 
 function CountUpStat({ end, duration = 1500, suffix = '' }) {
   const display = useCountUp(end, duration);
   return <>{display}{suffix}</>;
 }
 
+// ── Online Users Panel ─────────────────────────────────────────────────────────
+function OnlineUsersPanel() {
+  const [users, setUsers]   = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const res = await api.get('/users/online');
+        setUsers(res.data?.data ?? res.data ?? []);
+      } catch {}
+      setLoading(false);
+    };
+    fetch();
+    const interval = setInterval(fetch, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="pro-card p-7 mb-8">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex items-center gap-3">
+          <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Circle size={14} fill="#22c55e" color="#22c55e" />
+          </div>
+          <div>
+            <h3 className="text-lg font-extrabold text-[var(--text-primary)] leading-tight">Active Users</h3>
+            <p className="text-[11px] text-[var(--text-muted)] font-medium mt-0.5">Last 5 minutes</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg" style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
+          <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#22c55e', display: 'inline-block', boxShadow: '0 0 0 3px rgba(34,197,94,0.2)' }} />
+          <span className="text-[12px] font-black text-emerald-500">
+            {loading ? '...' : `${users.length} online`}
+          </span>
+        </div>
+      </div>
+
+      {/* Users grid */}
+      {loading ? (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="flex flex-col items-center gap-2 p-3 rounded-xl" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border-subtle)' }}>
+              <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'var(--border-subtle)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+              <div style={{ width: '50px', height: '9px', borderRadius: '5px', background: 'var(--border-subtle)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+            </div>
+          ))}
+        </div>
+      ) : users.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-10 gap-3">
+          <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'var(--bg-card-hover)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Users size={22} color="var(--text-muted)" />
+          </div>
+          <p className="text-[13px] font-semibold text-[var(--text-muted)]">No users online right now</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          {users.map(u => (
+            <div key={u.id} className="flex flex-col items-center gap-2 p-3 rounded-xl transition-all cursor-pointer"
+              style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border-subtle)' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(34,197,94,0.4)'; e.currentTarget.style.background = 'rgba(34,197,94,0.04)'; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.background = 'var(--bg-card-hover)'; }}
+            >
+              <div style={{ position: 'relative' }}>
+                <img src={avatarUrl(u)} alt={u.name}
+                  style={{ width: '44px', height: '44px', borderRadius: '12px', objectFit: 'cover', display: 'block', border: '2px solid rgba(34,197,94,0.4)' }} />
+                <span style={{ position: 'absolute', bottom: '-2px', right: '-2px', width: '11px', height: '11px', borderRadius: '50%', background: u.is_online ? '#22c55e' : '#94a3b8', border: '2px solid var(--bg-card)' }} />
+              </div>
+              <div className="text-center w-full">
+                <p className="text-[12px] font-bold text-[var(--text-primary)] truncate">{u.name?.split(' ')[0]}</p>
+                <p className="text-[10px] font-medium text-[var(--text-muted)] truncate capitalize">{u.role}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const { t } = useTranslation();
-  // const { stats, loading: statsLoading } = useAdminStats();
   const { stats, loading: statsLoading, fetchStats } = useAdminStats();
 
   const trafficData = [
@@ -34,21 +119,21 @@ export default function Dashboard() {
   ];
 
   const activityByCluster = (stats?.filieres ?? []).map((f, i) => ({
-  name:   f.name,
-  value:  f.count,
-  color:  ['#7BB342', '#1B365D', '#8B5CF6'][i % 3],
-  status: f.count > 0 ? t('dashboard.charts.status.optimal') : t('dashboard.charts.status.stable'),
-  icon:   [Cpu, Network, Brain][i % 3],
-}));
+    name:   f.name,
+    value:  f.count,
+    color:  ['#7BB342', '#1B365D', '#8B5CF6'][i % 3],
+    status: f.count > 0 ? t('dashboard.charts.status.optimal') : t('dashboard.charts.status.stable'),
+    icon:   [Cpu, Network, Brain][i % 3],
+  }));
 
-const totalNodes = activityByCluster.reduce((sum, f) => sum + f.value, 0);
+  const totalNodes = activityByCluster.reduce((sum, f) => sum + f.value, 0);
 
   return (
     <AdminLayout
       title={t('dashboard.title')}
       subtitle={t('dashboard.subtitle')}
       actions={[
-      { icon: <Calendar size={14} />, label: t('dashboard.actions.cycle'), onClick: fetchStats },
+        { icon: <Calendar size={14} />, label: t('dashboard.actions.cycle'), onClick: fetchStats },
         {
           icon: <Download size={14} />,
           label: t('dashboard.actions.export'),
@@ -87,6 +172,9 @@ const totalNodes = activityByCluster.reduce((sum, f) => sum + f.value, 0);
           </div>
         ))}
       </div>
+
+      {/* ── ONLINE USERS ── */}
+      <OnlineUsersPanel />
 
       {/* ── CHARTS ── */}
       <div className="flex flex-col lg:flex-row gap-6 mb-8">

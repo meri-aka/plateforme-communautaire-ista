@@ -28,6 +28,7 @@ class AuthController extends Controller
             'role'       => $request->role ?? 'stagiaire',
             'filiere_id' => $request->filiere_id ?: null,
             'bio'        => $request->bio,
+            'last_seen'  => now(),
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -53,6 +54,8 @@ class AuthController extends Controller
             ]);
         }
 
+        $user->update(['last_seen' => now()]);
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
@@ -63,20 +66,22 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        $request->user()->update(['last_seen' => null]);
         $request->user()->currentAccessToken()->delete();
 
         return response()->json(['message' => 'Logged out successfully.']);
     }
 
-   public function me(Request $request)
-{
-    $user = $request->user()->load('filiere');
-    return response()->json(array_merge($user->toArray(), [
-        'followers_count' => $user->followers()->count(),
-        'following_count' => $user->following()->count(),
-        'is_following'    => false,
-    ]));
-}
+    public function me(Request $request)
+    {
+        $user = $request->user()->load('filiere');
+        return response()->json(array_merge($user->toArray(), [
+            'followers_count' => $user->followers()->count(),
+            'following_count' => $user->following()->count(),
+            'is_following'    => false,
+        ]));
+    }
+
     public function updateMe(Request $request)
     {
         $user = $request->user();
@@ -93,5 +98,4 @@ class AuthController extends Controller
             'user'    => $user->fresh()->load('filiere'),
         ]);
     }
-    
 }

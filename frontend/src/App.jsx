@@ -15,6 +15,8 @@ import LogsPage               from './components/admin/pages/LogsPage';
 import ReportsPage            from './components/admin/pages/ReportsPage';
 import CompleteProfilePage    from './components/user/pages/UserCompleteProfilePage';
 import ProtectedRoute         from './components/ProtectedRoute';
+import GroupsPage             from './components/admin/pages/GroupsPage';
+
 
 // User-facing pages
 import UserProtectedRoute from './components/user/UserProtectedRoute';
@@ -55,6 +57,7 @@ export default function App() {
               <Route path="/admin/notifications" element={<AdminNotificationsPage />} />
               <Route path="/admin/logs"          element={<LogsPage />} />
               <Route path="/admin/reports"       element={<ReportsPage />} />
+              <Route path="/admin/groups" element={<GroupsPage />} />
             </Route>
 
             {/* ── User-facing routes ── */}

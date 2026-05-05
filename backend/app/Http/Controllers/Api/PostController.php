@@ -10,16 +10,28 @@ use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
-    public function index()
-    {
-        $posts = Post::with(['user.filiere', 'media'])
-            ->withCount(['likes', 'comments'])
-            ->latest()
-            ->paginate(10);
+    public function index(Request $request)
+{
+    $userId = auth()->id();
 
-        return response()->json($posts);
+    $query = Post::with(['user.filiere', 'media'])
+        ->withCount(['likes', 'comments'])
+        ->latest();
+
+    // Filter by user if requested
+    if ($request->filled('user_id')) {
+        $query->where('user_id', $request->user_id);
     }
 
+    $posts = $query->paginate(10);
+
+    $posts->getCollection()->transform(function ($post) use ($userId) {
+        $post->is_liked = $post->likes()->where('user_id', $userId)->exists();
+        return $post;
+    });
+
+    return response()->json($posts);
+}
     public function store(Request $request)
     {
         $request->validate([
@@ -49,9 +61,11 @@ class PostController extends Controller
     }
 
     public function show(Post $post)
-    {
-        return response()->json($post->load(['user.filiere', 'media', 'likes', 'comments.user']));
-    }
+{
+    $userId = auth()->id();
+    $post->is_liked = $post->likes()->where('user_id', $userId)->exists();
+    return response()->json($post->load(['user.filiere', 'media', 'likes', 'comments.user']));
+}
 
     public function update(Request $request, Post $post)
     {

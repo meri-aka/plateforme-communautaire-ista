@@ -76,6 +76,12 @@ export default function MessagesPage() {
 
   const bottomRef = useRef(null);
 
+  // 
+  const [showAddMember, setShowAddMember]       = useState(false);
+  const [addMemberSearch, setAddMemberSearch]   = useState('');
+  const [addMemberResults, setAddMemberResults] = useState([]);
+  const [addingMember, setAddingMember]         = useState(false);
+
   // ── Fetch conversations ──
   const fetchConversations = useCallback(() => {
     api.get('/messages').then(res => setConversations(res.data)).catch(() => {});
@@ -208,12 +214,13 @@ export default function MessagesPage() {
     fetchGroups();
     navigate('/messages');
   };
+  // console.log(groupData?.created_by, me?.id, typeof groupData?.created_by, typeof me?.id);
 
-  const isGroupCreator = groupData?.created_by === me?.id;
+  const isGroupCreator = Number(groupData?.created_by) === Number(me?.id);
   const activeMessages = groupId ? groupMessages : messages;
   const chatWithIsOnline = chatWith?.last_seen &&
     new Date(chatWith.last_seen) > new Date(Date.now() - 5 * 60 * 1000);
-
+    
   const filteredConvos = conversations.filter(c =>
     c.user?.name?.toLowerCase().includes(search.toLowerCase())
   );
@@ -237,6 +244,31 @@ export default function MessagesPage() {
     borderBottom: '1px solid var(--border-subtle)',
     transition: 'all 0.15s',
   });
+    const searchAddMember = useCallback(async (q) => {
+  if (!q.trim()) { setAddMemberResults([]); return; }
+  const res = await api.get(`/users/search?q=${q}`);
+  // Filter out existing members
+  const existingIds = groupData?.members?.map(m => m.id) ?? [];
+  setAddMemberResults(res.data.filter(u => !existingIds.includes(u.id)));
+}, [groupData]);
+
+useEffect(() => {
+  const delay = setTimeout(() => searchAddMember(addMemberSearch), 300);
+  return () => clearTimeout(delay);
+}, [addMemberSearch, searchAddMember]);
+
+const handleAddMember = async (userId) => {
+  setAddingMember(true);
+  try {
+    await api.post(`/groups/${groupId}/members`, { user_id: userId });
+    fetchGroupMessages(); // refreshes groupData with new member
+    setAddMemberSearch('');
+    setAddMemberResults([]);
+    setShowAddMember(false);
+  } finally {
+    setAddingMember(false);
+  }
+};
 
   return (
     <div style={{ display: 'flex', height: '100vh', background: 'var(--bg-main)', fontFamily: 'var(--font-body, system-ui)' }}>
@@ -445,50 +477,113 @@ export default function MessagesPage() {
 
       {/* ── GROUP INFO PANEL ── */}
       {showGroupInfo && groupData && (
-        <div style={{ width: '280px', flexShrink: 0, borderLeft: '1px solid var(--border-subtle)', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', padding: '20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)' }}>Group Info</h3>
-            <button onClick={() => setShowGroupInfo(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><X size={18} /></button>
-          </div>
+  <div style={{ width: '280px', flexShrink: 0, borderLeft: '1px solid var(--border-subtle)', background: 'var(--bg-card)', display: 'flex', flexDirection: 'column', padding: '20px' }}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)' }}>Group Info</h3>
+      <button onClick={() => { setShowGroupInfo(false); setShowAddMember(false); setAddMemberSearch(''); setAddMemberResults([]); }}
+        style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
+        <X size={18} />
+      </button>
+    </div>
 
-          <GroupAvatar group={groupData} size={64} />
-          <h4 style={{ margin: '14px 0 4px', fontSize: '18px', fontWeight: 900, color: 'var(--text-primary)', textAlign: 'center' }}>{groupData.name}</h4>
-          <p style={{ margin: '0 0 20px', fontSize: '12px', color: 'var(--text-muted)', textAlign: 'center' }}>Created by {groupData.creator?.name}</p>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
+      <GroupAvatar group={groupData} size={64} />
+      <h4 style={{ margin: '12px 0 4px', fontSize: '17px', fontWeight: 900, color: 'var(--text-primary)', textAlign: 'center' }}>{groupData.name}</h4>
+      <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)', textAlign: 'center' }}>Created by {groupData.creator?.name}</p>
+    </div>
 
-          <p style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px' }}>
-            Members ({groupData.members?.length})
-          </p>
-          <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
-            {groupData.members?.map(m => (
-              <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px', borderRadius: '10px', background: 'var(--bg-card-hover)' }}>
-                <Avatar user={m} size={32} />
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.name}</p>
-                  <p style={{ margin: 0, fontSize: '10px', color: 'var(--text-muted)', textTransform: 'capitalize' }}>{m.pivot?.role}</p>
-                </div>
-                {isGroupCreator && m.id !== me?.id && (
-                  <button onClick={async () => { await api.delete(`/groups/${groupId}/members/${m.id}`); fetchGroupMessages(); }}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#F43F5E', padding: '2px' }}>
-                    <X size={14} />
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {isGroupCreator ? (
-              <button onClick={handleDeleteGroup} style={{ padding: '10px', borderRadius: '10px', background: 'rgba(244,63,94,0.1)', border: '1px solid rgba(244,63,94,0.2)', color: '#F43F5E', fontWeight: 700, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                <Trash2 size={14} /> Delete Group
-              </button>
-            ) : (
-              <button onClick={handleLeaveGroup} style={{ padding: '10px', borderRadius: '10px', background: 'rgba(244,63,94,0.1)', border: '1px solid rgba(244,63,94,0.2)', color: '#F43F5E', fontWeight: 700, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                <LogOut size={14} /> Leave Group
-              </button>
-            )}
-          </div>
-        </div>
+    {/* Members header with Add button */}
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+      <p style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>
+        Members ({groupData.members?.length})
+      </p>
+      {isGroupCreator && (
+        <button onClick={() => setShowAddMember(v => !v)}
+          style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(123,179,66,0.1)', border: '1px solid rgba(123,179,66,0.2)', borderRadius: '8px', padding: '4px 10px', cursor: 'pointer', color: 'var(--brand)', fontSize: '11px', fontWeight: 700 }}>
+          <UserPlus size={12} /> Add
+        </button>
       )}
+    </div>
+
+    {/* Add member search */}
+    {showAddMember && (
+      <div style={{ marginBottom: '12px', padding: '12px', background: 'var(--bg-card-hover)', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
+        <div style={{ position: 'relative', marginBottom: '8px' }}>
+          <Search size={13} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+          <input
+            value={addMemberSearch}
+            onChange={e => setAddMemberSearch(e.target.value)}
+            placeholder="Search users..."
+            autoFocus
+            style={{ width: '100%', paddingLeft: '30px', paddingRight: '10px', paddingTop: '7px', paddingBottom: '7px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '8px', outline: 'none', fontSize: '12px', color: 'var(--text-primary)', boxSizing: 'border-box' }}
+          />
+        </div>
+        <div style={{ maxHeight: '160px', overflowY: 'auto' }}>
+          {addMemberResults.length === 0 && addMemberSearch ? (
+            <p style={{ fontSize: '12px', color: 'var(--text-muted)', textAlign: 'center', padding: '8px' }}>No users found.</p>
+          ) : addMemberResults.map(u => (
+            <div key={u.id}
+              onClick={() => handleAddMember(u.id)}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '7px', borderRadius: '8px', cursor: 'pointer' }}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-card)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            >
+              <Avatar user={u} size={28} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{ margin: 0, fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.name}</p>
+                <p style={{ margin: 0, fontSize: '10px', color: 'var(--text-muted)', textTransform: 'capitalize' }}>{u.role}</p>
+              </div>
+              {addingMember
+                ? <Loader2 size={12} style={{ color: 'var(--brand)', animation: 'spin 1s linear infinite' }} />
+                : <Plus size={12} style={{ color: 'var(--brand)' }} />
+              }
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {/* Members list */}
+    <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '14px' }}>
+      {groupData.members?.map(m => (
+        <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px', borderRadius: '10px', background: 'var(--bg-card-hover)' }}>
+          <Avatar user={m} size={30} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.name}</p>
+            <p style={{ margin: 0, fontSize: '10px', color: m.pivot?.role === 'admin' ? 'var(--brand)' : 'var(--text-muted)', textTransform: 'capitalize', fontWeight: m.pivot?.role === 'admin' ? 700 : 400 }}>
+              {m.pivot?.role}
+            </p>
+          </div>
+          {isGroupCreator && m.id !== me?.id && (
+            <button
+              onClick={async () => {
+                await api.delete(`/groups/${groupId}/members/${m.id}`);
+                fetchGroupMessages();
+              }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#F43F5E', padding: '2px', display: 'flex' }}
+              title="Remove member"
+            >
+              <X size={13} />
+            </button>
+          )}
+        </div>
+      ))}
+    </div>
+
+    {/* Actions */}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      {isGroupCreator ? (
+        <button onClick={handleDeleteGroup} style={{ padding: '10px', borderRadius: '10px', background: 'rgba(244,63,94,0.1)', border: '1px solid rgba(244,63,94,0.2)', color: '#F43F5E', fontWeight: 700, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+          <Trash2 size={14} /> Delete Group
+        </button>
+      ) : (
+        <button onClick={handleLeaveGroup} style={{ padding: '10px', borderRadius: '10px', background: 'rgba(244,63,94,0.1)', border: '1px solid rgba(244,63,94,0.2)', color: '#F43F5E', fontWeight: 700, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+          <LogOut size={14} /> Leave Group
+        </button>
+      )}
+    </div>
+  </div>
+)}
 
       {/* ── NEW CHAT MODAL ── */}
       {showNewChat && (

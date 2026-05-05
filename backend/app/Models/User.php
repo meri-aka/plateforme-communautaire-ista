@@ -21,6 +21,7 @@ class User extends Authenticatable
         'avatar',
         'filiere_id',
         'bio',
+        'last_seen',
     ];
 
     protected $hidden = [
@@ -32,6 +33,7 @@ class User extends Authenticatable
     {
         return [
             'password' => 'hashed',
+            'last_seen' => 'datetime',
         ];
     }
 

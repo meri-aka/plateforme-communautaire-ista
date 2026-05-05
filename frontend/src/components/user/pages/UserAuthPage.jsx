@@ -7,9 +7,6 @@ import {
   Mail, KeyRound, User, ArrowRight, Loader2,
   AlertCircle, Eye, EyeOff, Sparkles, Sun, Moon, Globe
 } from 'lucide-react';
-import bgImage from '../../../assets/login-bg-pro.png';
-import bgImageLight from '../../../assets/login-bg-prolight.png';
-import BrandLogo from '../../admin/common/BrandLogo';
 
 // ── Theme & Lang Toggles ──────────────────────────────────────────────────────
 const ThemeToggle = () => {
@@ -38,7 +35,7 @@ const LanguageToggle = () => {
       style={{
         border: '1px solid var(--glass-border)',
         color: 'var(--text-primary)',
-        background: 'rgba(var(--bg-elevated-rgb), 0.05)' // Or just use a variable
+        background: 'rgba(var(--bg-elevated-rgb), 0.05)'
       }}
     >
       <Globe size={18} color="var(--brand)" /> EN
@@ -167,7 +164,6 @@ export default function UserAuthPage() {
         const u = await login(form.email, form.password);
         redirectAfterAuth(u, navigate);
       } else if (isForgot) {
-        // Mocking API call for forgot password
         await new Promise(r => setTimeout(r, 1500));
         setSuccessMessage('A password reset link has been sent to your email.');
       } else {
@@ -198,8 +194,6 @@ export default function UserAuthPage() {
     setForm({ name:'', email:'', password:'', password_confirmation:'' });
   };
 
-  const visualBg = theme === 'dark' ? bgImage : bgImageLight;
-
   // ── Form Screen ──
   return (
     <div className="min-h-screen bg-[var(--bg-main)] flex overflow-hidden">
@@ -208,10 +202,18 @@ export default function UserAuthPage() {
 
       {/* Visual Side */}
       <div className="animate-fade-in hidden lg:flex flex-[1.2] relative items-end p-24 overflow-hidden">
-        <img src={bgImage} className="absolute inset-0 w-full h-full object-cover dark:opacity-100 opacity-0 transition-opacity duration-300" alt="" />
-        <img src={bgImageLight} className="absolute inset-0 w-full h-full object-cover dark:opacity-0 opacity-100 transition-opacity duration-300" alt="" />
-        
-        <div className="absolute inset-0" style={{ background: 'var(--auth-overlay)' }} />
+
+        {/* Video Background */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          src="/Video 1.mp4"
+        />
+
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.35) 100%)' }} />
         <div className="mesh-bg absolute inset-0 opacity-50" />
         
         <div className="absolute top-[-100px] left-[-100px] w-[500px] h-[500px] rounded-full blur-[100px] pointer-events-none" style={{ background: 'radial-gradient(circle, var(--brand-dim) 0%, transparent 70%)' }}/>
@@ -299,7 +301,7 @@ export default function UserAuthPage() {
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-8" style={{ opacity: initSequence >= 3 ? 1 : 0, transition: 'all 0.8s', transform: initSequence >= 3 ? 'translateY(0)' : 'translateY(10px)' }}>
             
-            {!isLogin && (
+            {!isLogin && !isForgot && (
               <Field label="Full Name" icon={User} value={form.name} onChange={setF('name')} placeholder="Mohammed Alami" error={errors.name} />
             )}
 

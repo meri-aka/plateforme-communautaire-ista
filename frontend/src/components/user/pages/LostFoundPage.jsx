@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect,  useRef } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import api from '../../../api/axios';
 import { PackageSearch, Plus, X, Loader2, MapPin, Tag, Clock, CheckCircle, AlertCircle, Search } from 'lucide-react';
@@ -94,18 +94,45 @@ function ClaimModal({ item, onClose, onClaimed }) {
 }
 
 function CreateItemModal({ onClose, onCreated }) {
-  const [form, setForm] = useState({ title:'', description:'', type:'lost', location:'' });
+  const [form, setForm]           = useState({ title: '', description: '', type: 'lost', location: '' });
+  const [files, setFiles]         = useState([]);
+  const [previews, setPreviews]   = useState([]);
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError]         = useState('');
+  const fileRef                   = useRef(null);
 
-  const set = (k, v) => setForm(f => ({ ...f, [k]:v }));
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  const addFiles = (incoming) => {
+    const valid = Array.from(incoming)
+      .filter(f => f.type.startsWith('image/'))
+      .slice(0, 4 - files.length);
+    if (!valid.length) return;
+    const newFiles    = [...files, ...valid].slice(0, 4);
+    const newPreviews = [...previews, ...valid.map(f => URL.createObjectURL(f))].slice(0, 4);
+    setFiles(newFiles);
+    setPreviews(newPreviews);
+  };
+
+  const removeFile = (i) => {
+    URL.revokeObjectURL(previews[i]);
+    setFiles(prev => prev.filter((_, idx) => idx !== i));
+    setPreviews(prev => prev.filter((_, idx) => idx !== i));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.title.trim() || !form.description.trim()) { setError('Title and description are required.'); return; }
     setSubmitting(true);
     try {
-      await api.post('/lost-found', form);
+      const fd = new FormData();
+      fd.append('title',       form.title);
+      fd.append('description', form.description);
+      fd.append('type',        form.type);
+      fd.append('location',    form.location);
+      files.forEach(f => fd.append('media[]', f));
+      await api.post('/lost-found', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      previews.forEach(p => URL.revokeObjectURL(p));
       onCreated();
       onClose();
     } catch (err) {
@@ -115,26 +142,29 @@ function CreateItemModal({ onClose, onCreated }) {
   };
 
   return (
-    <div style={{ position:'fixed', inset:0, zIndex:200, display:'flex', alignItems:'center', justifyContent:'center', padding:'16px' }}>
-      <div style={{ position:'absolute', inset:0, background:'rgba(0,0,0,0.6)', backdropFilter:'blur(8px)' }} onClick={onClose}/>
-      <div style={{ position:'relative', zIndex:1, background:'var(--bg-card)', borderRadius:'20px', padding:'28px',
-        border:'1px solid var(--border-subtle)', width:'100%', maxWidth:'520px',
-        boxShadow:'0 24px 64px rgba(0,0,0,0.4)', maxHeight:'90vh', overflowY:'auto' }}>
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'24px' }}>
-          <h2 style={{ fontSize:'18px', fontWeight:800, color:'var(--text-primary)', margin:0 }}>Post an Item</h2>
-          <button onClick={onClose} style={{ background:'none', border:'none', cursor:'pointer', color:'var(--text-muted)' }}>
-            <X size={20}/>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
+      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)' }} onClick={onClose} />
+      <div style={{
+        position: 'relative', zIndex: 1, background: 'var(--bg-card)', borderRadius: '20px', padding: '28px',
+        border: '1px solid var(--border-subtle)', width: '100%', maxWidth: '520px',
+        boxShadow: '0 24px 64px rgba(0,0,0,0.4)', maxHeight: '90vh', overflowY: 'auto',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+          <h2 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>Post an Item</h2>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
+            <X size={20} />
           </button>
         </div>
 
         {/* Type Toggle */}
-        <div style={{ display:'flex', gap:'4px', background:'var(--bg-card-hover)', borderRadius:'10px', padding:'4px', marginBottom:'20px' }}>
-          {['lost','found'].map(t => (
-            <button key={t} onClick={()=>set('type',t)}
-              style={{ flex:1, padding:'8px', borderRadius:'8px', border:'none', cursor:'pointer',
-                fontWeight:700, fontSize:'13px', textTransform:'capitalize', transition:'all 0.2s',
-                background: form.type===t ? (t==='lost'?'#F43F5E':'#7BB342') : 'transparent',
-                color: form.type===t ? '#fff' : 'var(--text-muted)' }}>
+        <div style={{ display: 'flex', gap: '4px', background: 'var(--bg-card-hover)', borderRadius: '10px', padding: '4px', marginBottom: '20px' }}>
+          {['lost', 'found'].map(t => (
+            <button key={t} onClick={() => set('type', t)} style={{
+              flex: 1, padding: '8px', borderRadius: '8px', border: 'none', cursor: 'pointer',
+              fontWeight: 700, fontSize: '13px', textTransform: 'capitalize', transition: 'all 0.2s',
+              background: form.type === t ? (t === 'lost' ? '#F43F5E' : '#7BB342') : 'transparent',
+              color: form.type === t ? '#fff' : 'var(--text-muted)',
+            }}>
               {t}
             </button>
           ))}
@@ -142,34 +172,75 @@ function CreateItemModal({ onClose, onCreated }) {
 
         <form onSubmit={handleSubmit}>
           {[
-            { label:'Title *', key:'title', placeholder:'e.g. Black backpack, Student ID card…' },
-            { label:'Location', key:'location', placeholder:'e.g. Building A, Cafeteria…' },
+            { label: 'Title *',   key: 'title',    placeholder: 'e.g. Black backpack, Student ID card…' },
+            { label: 'Location',  key: 'location', placeholder: 'e.g. Building A, Cafeteria…' },
           ].map(f => (
-            <div key={f.key} style={{ marginBottom:'16px' }}>
-              <label style={{ fontSize:'13px', fontWeight:600, color:'var(--text-secondary)', display:'block', marginBottom:'6px' }}>{f.label}</label>
-              <input value={form[f.key]} onChange={e=>set(f.key,e.target.value)} placeholder={f.placeholder}
-                style={{ width:'100%', background:'var(--bg-card-hover)', border:'1px solid var(--border-subtle)',
-                  borderRadius:'10px', padding:'11px 14px', fontSize:'14px', color:'var(--text-primary)', outline:'none' }}
-                onFocus={e=>e.target.style.borderColor='var(--brand)'}
-                onBlur={e=>e.target.style.borderColor='var(--border-subtle)'}/>
+            <div key={f.key} style={{ marginBottom: '16px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>{f.label}</label>
+              <input value={form[f.key]} onChange={e => set(f.key, e.target.value)} placeholder={f.placeholder}
+                style={{ width: '100%', background: 'var(--bg-card-hover)', border: '1px solid var(--border-subtle)', borderRadius: '10px', padding: '11px 14px', fontSize: '14px', color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box' }}
+                onFocus={e => e.target.style.borderColor = 'var(--brand)'}
+                onBlur={e => e.target.style.borderColor = 'var(--border-subtle)'} />
             </div>
           ))}
-          <div style={{ marginBottom:'20px' }}>
-            <label style={{ fontSize:'13px', fontWeight:600, color:'var(--text-secondary)', display:'block', marginBottom:'6px' }}>Description *</label>
-            <textarea value={form.description} onChange={e=>set('description',e.target.value)} rows={4}
+
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>Description *</label>
+            <textarea value={form.description} onChange={e => set('description', e.target.value)} rows={3}
               placeholder="Describe the item in detail — color, brand, distinguishing features…"
-              style={{ width:'100%', background:'var(--bg-card-hover)', border:'1px solid var(--border-subtle)',
-                borderRadius:'10px', padding:'12px 14px', fontSize:'14px', color:'var(--text-primary)', outline:'none',
-                resize:'vertical', fontFamily:'inherit' }}
-              onFocus={e=>e.target.style.borderColor='var(--brand)'}
-              onBlur={e=>e.target.style.borderColor='var(--border-subtle)'}/>
+              style={{ width: '100%', background: 'var(--bg-card-hover)', border: '1px solid var(--border-subtle)', borderRadius: '10px', padding: '12px 14px', fontSize: '14px', color: 'var(--text-primary)', outline: 'none', resize: 'vertical', fontFamily: 'inherit', boxSizing: 'border-box' }}
+              onFocus={e => e.target.style.borderColor = 'var(--brand)'}
+              onBlur={e => e.target.style.borderColor = 'var(--border-subtle)'} />
           </div>
-          {error && <p style={{ color:'#F43F5E', fontSize:'13px', marginBottom:'12px' }}>{error}</p>}
-          <button type="submit" disabled={submitting}
-            style={{ width:'100%', padding:'12px', borderRadius:'12px', border:'none', cursor:'pointer',
-              background:'linear-gradient(135deg,#7BB342,#9ed44e)', color:'#fff', fontWeight:700, fontSize:'15px',
-              display:'flex', alignItems:'center', justifyContent:'center', gap:'8px' }}>
-            {submitting ? <Loader2 size={18} style={{animation:'spin 1s linear infinite'}}/> : <Plus size={18}/>}
+
+          {/* Image Upload */}
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
+              Photos ({files.length}/4)
+            </label>
+            <input ref={fileRef} type="file" accept="image/*" multiple style={{ display: 'none' }}
+              onChange={e => { addFiles(e.target.files); e.target.value = ''; }} />
+
+            {previews.length > 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px', marginBottom: '8px' }}>
+                {previews.map((p, i) => (
+                  <div key={i} style={{ position: 'relative', aspectRatio: '1/1', borderRadius: '8px', overflow: 'hidden' }}>
+                    <img src={p} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    <button type="button" onClick={() => removeFile(i)} style={{
+                      position: 'absolute', top: '4px', right: '4px', width: '20px', height: '20px',
+                      borderRadius: '50%', background: 'rgba(0,0,0,0.6)', border: 'none', color: '#fff',
+                      cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <X size={11} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {files.length < 4 && (
+              <button type="button" onClick={() => fileRef.current?.click()} style={{
+                width: '100%', padding: '10px', borderRadius: '10px', border: '2px dashed var(--border-subtle)',
+                background: 'var(--bg-card-hover)', color: 'var(--text-muted)', cursor: 'pointer',
+                fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+              }}
+                onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--brand)'}
+                onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-subtle)'}
+              >
+                <Plus size={16} /> Add Photos
+              </button>
+            )}
+          </div>
+
+          {error && <p style={{ color: '#F43F5E', fontSize: '13px', marginBottom: '12px' }}>{error}</p>}
+
+          <button type="submit" disabled={submitting} style={{
+            width: '100%', padding: '12px', borderRadius: '12px', border: 'none', cursor: 'pointer',
+            background: 'linear-gradient(135deg,#7BB342,#9ed44e)', color: '#fff', fontWeight: 700, fontSize: '15px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+            opacity: submitting ? 0.7 : 1,
+          }}>
+            {submitting ? <Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} /> : <Plus size={18} />}
             Post Item
           </button>
         </form>
@@ -177,7 +248,6 @@ function CreateItemModal({ onClose, onCreated }) {
     </div>
   );
 }
-
 function ItemCard({ item, onClaim }) {
   const { user } = useAuth();
   const isOwner = item.user?.id === user?.id;
