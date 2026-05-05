@@ -32,38 +32,47 @@ plateforme-communautaire-ista/
 ├── backend/                        # Laravel 11 REST API
 │   ├── app/
 │   │   ├── Http/
-│   │   │   ├── Controllers/Api/    # All API controllers
+│   │   │   ├── Controllers/Api/    # API controllers
 │   │   │   └── Middleware/         # Custom middleware
 │   │   └── Models/                 # Eloquent models
+│   │
 │   ├── database/
 │   │   ├── migrations/             # Database migrations
 │   │   └── seeders/                # Database seeders
+│   │
 │   ├── routes/
 │   │   └── api.php                 # All API routes
+│   │
 │   ├── storage/                    # Uploaded files
 │   ├── .env.example                # Environment template
 │   └── db.sql                      # Database dump (optional)
 │
 └── frontend/                       # React + Vite SPA
-├── src/
-│   ├── api/                    # Axios instance
-│   ├── assets/                 # Images & static files
-│   ├── components/
-│   │   ├── admin/              # Admin panel components
-│   │   │   ├── layout/         # AdminLayout, Navbar, Sidebar
-│   │   │   └── pages/          # Dashboard, Users, Posts, etc.
-│   │   └── user/               # User interface components
-│   │       ├── layout/         # UserLayout
-│   │       └── pages/          # Feed, Profile, Messages, etc.
-│   ├── context/                # AuthContext, ThemeContext
-│   ├── hooks/                  # Custom React hooks
-│   ├── locales/                # i18n translations (en, fr)
-│   ├── pages/                  # Route-level pages
-│   ├── utils/                  # PDF export utilities
-│   ├── App.jsx                 # Routes definition
-│   └── main.jsx                # Entry point
-└── .env.example                # Environment template
-
+    └── src/
+        ├── api/                    # Axios configuration for API requests
+        ├── assets/                 # Images, icons, and static assets
+        │
+        ├── components/
+        │   ├── admin/              # Admin panel components
+        │   │   ├── common/         # Reusable admin components
+        │   │   ├── layout/                   # Admin layout (Navbar, Sidebar)
+        │   │   ├── pages/                      # Admin pages
+        │   │   └── Dashboard.jsx               # Admin dashboard main component
+        │   │
+        │   └── user/                           # User interface components
+        │       ├── layout/                     # User layout components
+        │       ├── pages/                      # User pages (feed, profile, etc.)
+        │       ├── LandingPage.jsx             # Public landing page
+        │       ├── ProtectedRoute.jsx          # Route protection component
+        │       └── UserProtectedRoute.jsx      # User-specific route guard
+        │
+        ├── context/                            # React contexts(AuthContext,ThemeContext)
+        ├── hooks/                              # Custom React hooks
+        ├── locales/                            # i18n translations (en, fr)
+        ├── pages/                              # Route-level pages
+        ├── utils/                              # Utility functions(PDF export, helpers)
+        ├── App.jsx                             # Main routes configuration
+        └── main.jsx                            # React application entry point   
 ## 🚀 Getting Started
 
 ### Prerequisites
