@@ -28,9 +28,10 @@ Route::post('/login',    [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
 
     // Auth
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/me',      [AuthController::class, 'me']);
-    Route::patch('/me',    [AuthController::class, 'updateMe']);
+    Route::post('/logout',      [AuthController::class, 'logout']);
+    Route::get('/me',           [AuthController::class, 'me']);
+    Route::patch('/me',         [AuthController::class, 'updateMe']);
+    Route::post('/me/avatar',   [AuthController::class, 'uploadAvatar']);
 
     // Filieres
     Route::get('filieres', fn() => response()->json(\App\Models\Filiere::all()));

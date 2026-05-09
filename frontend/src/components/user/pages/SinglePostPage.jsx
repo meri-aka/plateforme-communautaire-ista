@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import api from '../../../api/axios';
 import { Heart, MessageCircle, Send, ArrowLeft, Loader2, Trash2 } from 'lucide-react';
+import { resolveAvatar } from '../../../utils/avatarUrl';
 
 const timeAgo = (date) => {
   const diff = (Date.now() - new Date(date)) / 1000;
@@ -12,8 +13,7 @@ const timeAgo = (date) => {
   return `${Math.floor(diff / 86400)}d ago`;
 };
 
-const avatarUrl = (u) =>
-  u?.avatar ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(u?.name ?? 'U')}&background=7BB342&color=fff&size=128`;
+const avatarUrl = (u) => resolveAvatar(u, 128);
 
 export default function SinglePostPage() {
   const { id } = useParams();

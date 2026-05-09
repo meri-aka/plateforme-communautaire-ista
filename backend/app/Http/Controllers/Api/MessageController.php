@@ -71,17 +71,27 @@ class MessageController extends Controller
         ]);
     }
 
-    // POST /api/messages/{user} — send a message
     public function store(Request $request, User $user)
     {
         $request->validate([
-            'body' => 'required|string|max:2000',
+            'body'  => 'nullable|string|max:2000',
+            'image' => 'nullable|image|max:5120',
         ]);
+
+        if (!$request->body && !$request->hasFile('image')) {
+            return response()->json(['message' => 'Message cannot be empty.'], 422);
+        }
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('messages', 'public');
+        }
 
         $message = Message::create([
             'sender_id'   => $request->user()->id,
             'receiver_id' => $user->id,
             'body'        => $request->body,
+            'image'       => $imagePath,
         ]);
 
         return response()->json($message->load(['sender', 'receiver']), 201);

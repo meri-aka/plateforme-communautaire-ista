@@ -70,6 +70,12 @@ export default function UsersPage() {
     admin:      { label: t('users.roles.admin'),   color: '#8B5CF6', bg: 'rgba(139,92,246,0.1)'  },
   };
 
+  const resolveAvatar = (u) => {
+    if (!u?.avatar) return null;
+    if (!u.avatar.startsWith('http')) return `http://localhost:8000/storage/${u.avatar}`;
+    return u.avatar;
+  };
+
   const [showInvite, setShowInvite] = useState(false);
   const [inviteData, setInviteData] = useState({ name: '', email: '', role: 'stagiaire', filiere_id: '' });
   const [inviteLoading, setInviteLoading] = useState(false);
@@ -192,8 +198,8 @@ const handleInvite = async () => {
                     <tr key={u.id} className="border-b transition-colors hover:bg-[var(--bg-card-hover)]" style={{ borderColor: 'var(--border-subtle)' }}>
                       <td className="p-5">
                         <div className="flex items-center gap-3">
-                          {u.avatar
-                            ? <img src={u.avatar} className="w-10 h-10 rounded-xl border object-cover" style={{ borderColor: 'var(--border-subtle)' }} alt="" />
+                          {resolveAvatar(u)
+                            ? <img src={resolveAvatar(u)} className="w-10 h-10 rounded-xl border object-cover" style={{ borderColor: 'var(--border-subtle)' }} alt="" />
                             : <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-white text-sm" style={{ background: RL.color }}>{u.name.charAt(0)}</div>
                           }
                           <div>

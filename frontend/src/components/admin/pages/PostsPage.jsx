@@ -7,6 +7,14 @@ import { useTranslation } from 'react-i18next';
 import AdminLayout from '../layout/AdminLayout';
 import api from '../../../api/axios';
 import { exportPostsPDF } from '../../../utils/exportPDF';
+import { resolveAvatar } from '../../../utils/avatarUrl';
+
+const BASE_URL = import.meta.env.VITE_API_URL?.replace('/api', '') ?? 'http://localhost:8000';
+const resolveUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  return `${BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+};
 
 export default function PostsPage() {
   const { t } = useTranslation();
@@ -98,7 +106,7 @@ export default function PostsPage() {
                     <td className="p-5">
                       <div className="flex items-center gap-4">
                         {p.user?.avatar
-                          ? <img src={p.user.avatar} className="w-12 h-12 rounded-xl border object-cover" alt="" style={{ borderColor: 'var(--border-subtle)' }} />
+                          ? <img src={resolveAvatar(p.user)} className="w-12 h-12 rounded-xl border object-cover" alt="" style={{ borderColor: 'var(--border-subtle)' }} />
                           : <div className="w-12 h-12 rounded-xl flex items-center justify-center font-black text-white text-sm bg-[var(--brand)]">{p.user?.name?.charAt(0) ?? '?'}</div>
                         }
                         <div>
@@ -170,7 +178,7 @@ export default function PostsPage() {
           <div className="pro-card relative z-10 w-full max-w-lg p-8 animate-slide-up max-h-[80vh] overflow-y-auto">
             <div className="flex items-center gap-4 mb-6">
               {selectedPost.user?.avatar
-                ? <img src={selectedPost.user.avatar} className="w-12 h-12 rounded-xl object-cover" alt="" />
+                ? <img src={resolveAvatar(selectedPost.user)} className="w-12 h-12 rounded-xl object-cover" alt="" />
                 : <div className="w-12 h-12 rounded-xl flex items-center justify-center font-black text-white" style={{ background: 'var(--brand)' }}>{selectedPost.user?.name?.charAt(0) ?? '?'}</div>
               }
               <div>
@@ -186,7 +194,7 @@ export default function PostsPage() {
             {selectedPost.media?.length > 0 && (
               <div className="grid grid-cols-2 gap-2 mb-6">
                 {selectedPost.media.map((m, i) => (
-                  <img key={i} src={m.url} className="w-full h-32 object-cover rounded-xl" alt="" />
+                  <img key={i} src={resolveUrl(m.url)} className="w-full h-32 object-cover rounded-xl" alt="" />
                 ))}
               </div>
             )}

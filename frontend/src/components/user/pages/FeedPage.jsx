@@ -2,10 +2,11 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import api from '../../../api/axios';
+import { resolveAvatar } from '../../../utils/avatarUrl';
 import {
   Heart, MessageCircle, Send, Loader2, BookOpen,
   ImagePlus, X, ChevronLeft, ChevronRight,
-  Sparkles, TrendingUp, Users
+  Sparkles, TrendingUp, Users, Hand
 } from 'lucide-react';
 
 const BASE_URL = import.meta.env.VITE_API_URL?.replace('/api', '') ?? 'http://localhost:8000';
@@ -18,8 +19,7 @@ const timeAgo = (date) => {
   return `${Math.floor(diff / 86400)}d`;
 };
 
-const avatarUrl = (u) =>
-  u?.avatar ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(u?.name ?? 'U')}&background=7BB342&color=fff&size=128`;
+const avatarUrl = (u) => resolveAvatar(u, 128);
 
 const resolveUrl = (url) => {
   if (!url) return '';
@@ -65,8 +65,8 @@ function OnlineUsers() {
     }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '12px' }}>
-        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', boxShadow: '0 0 0 3px rgba(34,197,94,0.2)', flexShrink: 0 }} />
-        <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '0.02em', textTransform: 'uppercase' }}>
+        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-gold)', boxShadow: '0 0 0 3px var(--gold-glow)', flexShrink: 0 }} />
+        <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--accent-gold)', letterSpacing: '0.02em', textTransform: 'uppercase' }}>
           Active Now
         </span>
         {!loading && (
@@ -553,32 +553,38 @@ export default function FeedPage() {
   const greeting = hour < 12 ? 'Salam' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
 
   return (
-    <div style={{ maxWidth: '620px', margin: '0 auto' }}>
+    <div style={{ maxWidth: '820px', margin: '0 auto' }}>
 
       {/* Welcome banner */}
       <div style={{
-        background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
-        borderRadius: '16px', padding: '20px 22px', marginBottom: '14px',
-        position: 'relative', overflow: 'hidden',
+        position: 'relative', borderRadius: '24px', padding: '24px', marginBottom: '24px',
+        border: '1px solid var(--border-active)', overflow: 'hidden',
+        boxShadow: 'var(--shadow-premium), inset 0 1px 0 rgba(255,255,255,0.05)',
+        background: 'var(--bg-card)'
       }}>
-        <div style={{ position: 'absolute', top: 0, right: 0, width: '200px', height: '100%', background: 'radial-gradient(circle at 80% 50%, var(--brand-dim) 0%, transparent 70%)', pointerEvents: 'none' }} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', position: 'relative' }}>
-          <div style={{ position: 'relative', flexShrink: 0 }}>
-            <img src={avatarUrl(user)} alt="me"
-              style={{ width: '48px', height: '48px', borderRadius: '14px', objectFit: 'cover', display: 'block', border: '2px solid var(--border-subtle)' }} />
-            <span style={{ position: 'absolute', bottom: '-1px', right: '-1px', width: '12px', height: '12px', borderRadius: '50%', background: '#22c55e', border: '2px solid var(--bg-card)' }} />
-          </div>
-          <div style={{ flex: 1 }}>
-            <h1 style={{ fontSize: '18px', fontWeight: 900, letterSpacing: '-0.4px', margin: 0, color: 'var(--text-primary)' }}>
-              {greeting}, <span style={{ color: 'var(--brand)' }}>{user?.name?.split(' ')[0]}</span> 👋
+        {/* Animated Orbs */}
+        <div style={{ position: 'absolute', top: '-50%', left: '-20%', width: '400px', height: '400px', background: 'radial-gradient(circle, var(--brand-glow) 0%, transparent 60%)', animation: 'spin 15s linear infinite', opacity: 0.8, pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: '-50%', right: '-20%', width: '350px', height: '350px', background: 'radial-gradient(circle, var(--gold-glow) 0%, transparent 60%)', animation: 'spin 20s reverse linear infinite', opacity: 0.8, pointerEvents: 'none' }} />
+        
+        {/* Glassmorphism Blur Layer */}
+        <div style={{ position: 'absolute', inset: 0, backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)', backgroundColor: 'var(--glass-bg)', zIndex: 0, pointerEvents: 'none' }} />
+
+        {/* Content */}
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '20px' }}>
+          <div>
+            <h1 style={{ fontSize: '28px', fontWeight: 900, color: 'var(--text-primary)', margin: '0 0 4px', letterSpacing: '-0.5px' }}>
+              {greeting}, <span className="pro-text-gradient">{user?.name?.split(' ')[0]}</span>! 
+              <span style={{ display: 'inline-block', animation: 'wave 2.5s infinite', transformOrigin: '70% 70%', marginLeft: '8px' }}>
+                <Hand size={24} color="var(--accent-gold)" fill="var(--gold-dim)" />
+              </span>
             </h1>
-            <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '3px 0 0', fontWeight: 500 }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '15px', fontWeight: 500, margin: 0 }}>
               What's on your mind today?
             </p>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '5px 10px', borderRadius: '8px', background: 'var(--brand-dim)', border: '1px solid rgba(123,179,66,0.2)' }}>
-            <Sparkles size={12} color="var(--brand)" />
-            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--brand)' }}>LIVE</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '5px 10px', borderRadius: '8px', background: 'var(--gold-dim)', border: '1px solid var(--gold-glow)' }}>
+            <Sparkles size={12} color="var(--accent-gold)" />
+            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--accent-gold)' }}>LIVE</span>
           </div>
         </div>
       </div>
@@ -598,8 +604,8 @@ export default function FeedPage() {
         </div>
       ) : posts.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '48px 24px', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '16px' }}>
-          <div style={{ width: '56px', height: '56px', borderRadius: '16px', margin: '0 auto 14px', background: 'var(--brand-dim)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <BookOpen size={26} color="var(--brand)" />
+          <div style={{ width: '56px', height: '56px', borderRadius: '16px', margin: '0 auto 14px', background: 'var(--gold-dim)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <BookOpen size={26} color="var(--accent-gold)" />
           </div>
           <h3 style={{ fontSize: '16px', fontWeight: 800, margin: '0 0 6px', color: 'var(--text-primary)' }}>No posts yet</h3>
           <p style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 500, margin: 0 }}>Be the first to share something!</p>

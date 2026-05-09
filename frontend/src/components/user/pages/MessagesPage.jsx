@@ -1,16 +1,17 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { Send, ArrowLeft, Search, Loader2, MessageSquare, Plus, X, Users, MessageCircle, UserPlus, Trash2, LogOut } from 'lucide-react';
+import { Send, ArrowLeft, Search, Loader2, MessageSquare, Plus, X, Users, MessageCircle, UserPlus, Trash2, LogOut, Menu } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import api from '../../../api/axios';
+import { resolveAvatar } from '../../../utils/avatarUrl';
 
 function Avatar({ user, size = 42 }) {
   const isOnline = user?.last_seen &&
     new Date(user.last_seen) > new Date(Date.now() - 5 * 60 * 1000);
   return (
     <div style={{ position: 'relative', flexShrink: 0 }}>
-      {user?.avatar
-        ? <img src={user.avatar} style={{ width: size, height: size, borderRadius: '12px', objectFit: 'cover' }} alt="" />
+      {resolveAvatar(user)
+        ? <img src={resolveAvatar(user)} style={{ width: size, height: size, borderRadius: '12px', objectFit: 'cover' }} alt="" />
         : <div style={{ width: size, height: size, borderRadius: '12px', background: 'var(--brand)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, color: '#fff', fontSize: size * 0.4 }}>
             {user?.name?.charAt(0) ?? '?'}
           </div>
@@ -57,11 +58,14 @@ export default function MessagesPage() {
 
   // Shared
   const [body, setBody]                   = useState('');
+  const [image, setImage]                 = useState(null);
+  const [imagePreview, setImagePreview]   = useState(null);
   const [sending, setSending]             = useState(false);
   const [loading, setLoading]             = useState(false);
   const [search, setSearch]               = useState('');
   const [tab, setTab]                     = useState('chats');
   const [onlineUsers, setOnlineUsers]     = useState([]);
+  const [sidebarOpen, setSidebarOpen]     = useState(true);
 
   // Modals
   const [showNewChat, setShowNewChat]         = useState(false);
@@ -75,6 +79,9 @@ export default function MessagesPage() {
   const [creating, setCreating]               = useState(false);
 
   const bottomRef = useRef(null);
+  const fileInputRef = useRef(null);
+
+  const BASE_URL = import.meta.env.VITE_API_URL?.replace('/api', '') ?? 'http://localhost:8000';
 
   // 
   const [showAddMember, setShowAddMember]       = useState(false);
@@ -167,18 +174,27 @@ export default function MessagesPage() {
   // ── Send DM ──
   const handleSend = async (e) => {
     e.preventDefault();
-    if (!body.trim()) return;
+    if (!body.trim() && !image) return;
     setSending(true);
     try {
+      const formData = new FormData();
+      if (body.trim()) formData.append('body', body);
+      if (image) formData.append('image', image);
+
       if (groupId) {
-        await api.post(`/groups/${groupId}/messages`, { body });
+        await api.post(`/groups/${groupId}/messages`, formData);
         fetchGroupMessages();
       } else if (userId) {
-        await api.post(`/messages/${userId}`, { body });
+        await api.post(`/messages/${userId}`, formData);
         fetchMessages();
         fetchConversations();
       }
       setBody('');
+      setImage(null);
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+        setImagePreview(null);
+      }
     } finally { setSending(false); }
   };
 
@@ -230,10 +246,12 @@ export default function MessagesPage() {
 
   // ── Styles ──
   const sidebarStyle = {
-    width: '320px', flexShrink: 0,
-    borderRight: '1px solid var(--border-subtle)',
+    width: sidebarOpen ? '320px' : '0px', flexShrink: 0,
+    borderRight: sidebarOpen ? '1px solid var(--border-subtle)' : 'none',
     display: 'flex', flexDirection: 'column',
     background: 'var(--bg-card)',
+    overflow: 'hidden',
+    transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
   };
 
   const itemStyle = (isActive) => ({
@@ -381,7 +399,14 @@ const handleAddMember = async (userId) => {
       </div>
 
       {/* ── CHAT AREA ── */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, position: 'relative' }}>
+        
+        {/* Absolute Toggle Button for Empty State */}
+        {!sidebarOpen && (!userId && !groupId) && (
+          <button onClick={() => setSidebarOpen(true)} style={{ position: 'absolute', top: 20, left: 20, zIndex: 10, background: 'var(--bg-card-hover)', border: '1px solid var(--border-subtle)', borderRadius: '10px', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+            <Menu size={18} />
+          </button>
+        )}
         {!userId && !groupId ? (
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '16px' }}>
             <MessageSquare size={48} style={{ color: 'var(--text-muted)', opacity: 0.3 }} />
@@ -399,6 +424,9 @@ const handleAddMember = async (userId) => {
           <>
             {/* Chat Header */}
             <div style={{ padding: '14px 24px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', gap: '14px', background: 'var(--bg-card)' }}>
+              <button onClick={() => setSidebarOpen(s => !s)} title="Toggle Sidebar" style={{ background: 'var(--bg-card-hover)', border: '1px solid var(--border-subtle)', borderRadius: '10px', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-secondary)', flexShrink: 0 }}>
+                <Menu size={18} />
+              </button>
               {groupId ? (
                 <>
                   <GroupAvatar group={groupData} size={38} />
@@ -449,7 +477,10 @@ const handleAddMember = async (userId) => {
                         color: isMine ? '#fff' : 'var(--text-primary)',
                         fontSize: '14px', lineHeight: 1.5,
                       }}>
-                        <p style={{ margin: 0 }}>{msg.body}</p>
+                        {msg.image && (
+                          <img src={`${BASE_URL}/storage/${msg.image}`} alt="" style={{ maxWidth: '100%', maxHeight: '200px', borderRadius: '8px', marginBottom: msg.body ? '8px' : '0', display: 'block' }} />
+                        )}
+                        {msg.body && <p style={{ margin: 0 }}>{msg.body}</p>}
                         <p style={{ margin: '4px 0 0', fontSize: '10px', opacity: 0.7, textAlign: 'right' }}>
                           {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           {!groupId && isMine && <span style={{ marginLeft: '4px' }}>{msg.is_read ? ' ✓✓' : ' ✓'}</span>}
@@ -463,14 +494,30 @@ const handleAddMember = async (userId) => {
             </div>
 
             {/* Input */}
-            <form onSubmit={handleSend} style={{ padding: '14px 24px', borderTop: '1px solid var(--border-subtle)', display: 'flex', gap: '10px', alignItems: 'center', background: 'var(--bg-card)' }}>
-              <input value={body} onChange={e => setBody(e.target.value)}
-                placeholder={groupId ? `Message ${groupData?.name ?? 'group'}...` : `Message ${chatWith?.name ?? ''}...`}
-                style={{ flex: 1, padding: '11px 16px', borderRadius: '12px', background: 'var(--bg-card-hover)', border: '1px solid var(--border-subtle)', outline: 'none', fontSize: '14px', color: 'var(--text-primary)' }} />
-              <button type="submit" disabled={sending || !body.trim()} style={{ width: '42px', height: '42px', borderRadius: '12px', flexShrink: 0, background: 'var(--brand)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: sending || !body.trim() ? 0.5 : 1 }}>
-                {sending ? <Loader2 size={16} color="#fff" /> : <Send size={16} color="#fff" />}
-              </button>
-            </form>
+            <div style={{ background: 'var(--bg-card)', borderTop: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column' }}>
+              {imagePreview && (
+                <div style={{ padding: '10px 24px 0', position: 'relative', alignSelf: 'flex-start' }}>
+                  <img src={imagePreview} style={{ height: '80px', borderRadius: '8px', objectFit: 'cover' }} alt="preview" />
+                  <button type="button" onClick={() => { setImage(null); URL.revokeObjectURL(imagePreview); setImagePreview(null); }} style={{ position: 'absolute', top: '5px', right: '-5px', background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%', color: '#fff', cursor: 'pointer', padding: '4px' }}><X size={12} /></button>
+                </div>
+              )}
+              <form onSubmit={handleSend} style={{ padding: '14px 24px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+                <input type="file" ref={fileInputRef} accept="image/*" style={{ display: 'none' }} onChange={e => {
+                  const f = e.target.files[0];
+                  if (f) { setImage(f); setImagePreview(URL.createObjectURL(f)); }
+                  e.target.value = '';
+                }} />
+                <button type="button" onClick={() => fileInputRef.current?.click()} style={{ width: '42px', height: '42px', borderRadius: '12px', background: 'var(--bg-card-hover)', border: '1px solid var(--border-subtle)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
+                  <Plus size={18} />
+                </button>
+                <input value={body} onChange={e => setBody(e.target.value)}
+                  placeholder={groupId ? `Message ${groupData?.name ?? 'group'}...` : `Message ${chatWith?.name ?? ''}...`}
+                  style={{ flex: 1, padding: '11px 16px', borderRadius: '12px', background: 'var(--bg-card-hover)', border: '1px solid var(--border-subtle)', outline: 'none', fontSize: '14px', color: 'var(--text-primary)' }} />
+                <button type="submit" disabled={sending || (!body.trim() && !image)} style={{ width: '42px', height: '42px', borderRadius: '12px', flexShrink: 0, background: 'var(--brand)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: sending || (!body.trim() && !image) ? 0.5 : 1 }}>
+                  {sending ? <Loader2 size={16} color="#fff" style={{ animation: 'spin 1s linear infinite' }} /> : <Send size={16} color="#fff" />}
+                </button>
+              </form>
+            </div>
           </>
         )}
       </div>

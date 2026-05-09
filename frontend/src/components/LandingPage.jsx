@@ -1,325 +1,439 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Sun, Moon, Clock, Heart, MessageCircle, Share2, Sparkles } from 'lucide-react';
+import { ArrowRight, Sun, Moon, Clock, Heart, MessageCircle, Share2, Sparkles, Star } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
 import BrandLogo from './admin/common/BrandLogo';
+
+const AnimatedCounter = ({ target, suffix, startAnim, duration = 2000, decimals = 0 }) => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!startAnim) return;
+    let startTimestamp = null;
+    let animationFrame;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      setCount(easeProgress * target);
+      if (progress < 1) {
+        animationFrame = window.requestAnimationFrame(step);
+      } else {
+        setCount(target);
+      }
+    };
+    animationFrame = window.requestAnimationFrame(step);
+    return () => cancelAnimationFrame(animationFrame);
+  }, [target, duration, startAnim]);
+
+  return <>{count.toFixed(decimals)}{suffix}</>;
+};
 
 export default function LandingPage() {
   const navigate = useNavigate();
   const [ready, setReady] = useState(false);
   const { theme, toggleTheme } = useTheme();
-  const { user, loading } = useAuth();
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [lettersDone, setLettersDone] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setReady(true), 200);
-    return () => clearTimeout(t);
+    const handleMouseMove = (e) => {
+      setMousePos({
+        x: (e.clientX / window.innerWidth - 0.5) * 20,
+        y: (e.clientY / window.innerHeight - 0.5) * 20,
+      });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    const t = setTimeout(() => setReady(true), 150);
+    const t2 = setTimeout(() => setLettersDone(true), 1800);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      clearTimeout(t);
+      clearTimeout(t2);
+    };
   }, []);
 
-  useEffect(() => {
-    if (!loading && user) {
-      if (user.role === 'admin') navigate('/admin', { replace: true });
-      else navigate('/feed', { replace: true });
-    }
-  }, [user, loading, navigate]);
-
-  if (loading) return null;
+  /* Split text into animated spans */
+  const AnimWord = ({ text, color, delay = 0 }) => (
+    <span style={{ display: 'inline-block' }}>
+      {text.split('').map((ch, i) => (
+        <span key={i} style={{
+          display: 'inline-block',
+          opacity: ready ? 1 : 0,
+          transform: ready ? 'translateY(0) rotateX(0deg)' : 'translateY(40px) rotateX(-90deg)',
+          transition: `opacity 0.5s ease ${delay + i * 0.03}s, transform 0.5s cubic-bezier(0.2,1,0.3,1) ${delay + i * 0.03}s`,
+          color: color ?? 'inherit',
+          transformOrigin: 'bottom center',
+          ...(ch === ' ' ? { width: '0.3em' } : {}),
+        }}>
+          {ch === ' ' ? '\u00A0' : ch}
+        </span>
+      ))}
+    </span>
+  );
 
   return (
     <div style={{
-      width: '100vw',
-      height: '100vh',
-      overflow: 'hidden',
-      position: 'relative',
-      background: '#040604',
-      color: '#fff',
-      fontFamily: 'Inter, system-ui, sans-serif',
-      display: 'flex',
-      flexDirection: 'column',
+      width: '100vw', height: '100vh', overflow: 'hidden',
+      position: 'relative', background: '#0a120c',
+      color: '#fff', fontFamily: 'Inter, system-ui, sans-serif',
+      display: 'flex', flexDirection: 'column',
     }}>
 
-      {/* ── Video BG ── */}
-      <video autoPlay muted loop playsInline style={{
-        position: 'absolute', inset: 0, width: '100%', height: '100%',
-        objectFit: 'cover', zIndex: 0, opacity: 0.45,
-        filter: 'grayscale(0.2) contrast(1.1)',
-      }}>
-        <source src="/hero-video.mp4" type="video/mp4" />
-      </video>
+      {/* ── BG ── */}
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 0 }}>
+        <video autoPlay muted loop playsInline style={{
+          position: 'absolute', inset: 0, width: '100%', height: '100%',
+          objectFit: 'cover', opacity: 0.5, filter: 'contrast(1.1) brightness(0.9)',
+        }}>
+          <source src="/hero-video.mp4" type="video/mp4" />
+        </video>
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, #0a120c 0%, rgba(10,18,12,0.88) 35%, rgba(10,18,12,0.25) 68%, rgba(10,18,12,0) 100%)' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(0deg, #0a120c 0%, transparent 28%)' }} />
+        <div style={{
+          position: 'absolute', top: '-10%', left: '-10%', width: '50vw', height: '50vw',
+          background: 'radial-gradient(circle, rgba(212,175,55,0.12) 0%, transparent 70%)',
+          filter: 'blur(80px)', borderRadius: '50%',
+          transform: `translate(${mousePos.x * -1.5}px, ${mousePos.y * -1.5}px)`,
+          transition: 'transform 0.1s ease-out', pointerEvents: 'none',
+        }} />
+        <div style={{
+          position: 'absolute', bottom: '-20%', right: '-10%', width: '60vw', height: '60vw',
+          background: 'radial-gradient(circle, rgba(26,61,26,0.5) 0%, transparent 70%)',
+          filter: 'blur(100px)', borderRadius: '50%',
+          transform: `translate(${mousePos.x * 1.5}px, ${mousePos.y * 1.5}px)`,
+          transition: 'transform 0.1s ease-out', mixBlendMode: 'screen', pointerEvents: 'none',
+        }} />
+        <div style={{
+          position: 'absolute', inset: 0, opacity: 0.03,
+          backgroundImage: 'radial-gradient(#d4af37 1px, transparent 1px)',
+          backgroundSize: '32px 32px',
+        }} />
+      </div>
 
-      {/* ── Overlays ── */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(90deg, #040604 0%, rgba(4,6,4,0.88) 35%, rgba(4,6,4,0.55) 65%, rgba(4,6,4,0.15) 100%)' }} />
-      <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(0deg, #040604 0%, transparent 35%)' }} />
-
-      {/* ── Glow ── */}
-      <div style={{
-        position: 'absolute', top: '-15%', left: '-5%', zIndex: 2,
-        width: '55vw', height: '55vw', borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(123,179,66,0.08) 0%, transparent 70%)',
-        filter: 'blur(60px)', pointerEvents: 'none',
-      }} />
-
-      {/* ══════════════════════════════
-          NAVBAR
-          — flex row, fixed 72px height, never wraps
-      ══════════════════════════════ */}
+      {/* ── NAVBAR ── */}
       <nav style={{
-        position: 'relative',
-        zIndex: 100,
-        flexShrink: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        height: '72px',
-        paddingLeft: '40px',
-        paddingRight: '40px',
+        position: 'relative', zIndex: 100, flexShrink: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        height: '64px', padding: '0 5vw',
         opacity: ready ? 1 : 0,
-        transition: 'opacity 0.8s ease 0.15s',
+        transform: ready ? 'translateY(0)' : 'translateY(-20px)',
+        transition: 'all 0.7s cubic-bezier(0.2,1,0.3,1) 0.1s',
       }}>
-
-        {/* LEFT: brand */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <BrandLogo size={34} />
-          <div>
-            <div style={{ fontSize: '15px', fontWeight: 900, color: '#fff', letterSpacing: '-0.3px', lineHeight: 1 }}>
-              ISTA<span style={{ color: '#7BB342' }}>Connect</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+          <BrandLogo size={32} />
+          <div style={{ position: 'relative' }}>
+            <Sparkles size={12} color="#d4af37" style={{ position: 'absolute', top: -8, left: -14, animation: 'pulse 2s infinite' }} />
+            <div style={{ fontSize: '17px', fontWeight: 900, color: '#fff', letterSpacing: '-0.5px', lineHeight: 1 }}>
+              ISTA<span style={{ color: '#d4af37' }}>Connect</span>
             </div>
-            <div style={{ fontSize: '8px', fontWeight: 800, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.18em', textTransform: 'uppercase', marginTop: '3px' }}>
-              Premium Portal
+            <div style={{ fontSize: '8px', fontWeight: 800, color: 'rgba(212,175,55,0.7)', letterSpacing: '0.2em', textTransform: 'uppercase', marginTop: '3px' }}>
+              Édition Pro-Max
             </div>
+            <Sparkles size={10} color="var(--brand)" style={{ position: 'absolute', bottom: -6, right: -12, animation: 'pulse 2.5s infinite reverse' }} />
           </div>
         </div>
-
-        {/* RIGHT: controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button onClick={toggleTheme} style={{
             width: '38px', height: '38px', borderRadius: '10px',
-            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+            background: 'rgba(212,175,55,0.05)', border: '1px solid rgba(212,175,55,0.15)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', color: '#fff', transition: 'background 0.2s',
-          }}>
+            cursor: 'pointer', color: '#d4af37', transition: 'all 0.3s ease',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(212,175,55,0.1)'; e.currentTarget.style.transform = 'rotate(15deg)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(212,175,55,0.05)'; e.currentTarget.style.transform = 'rotate(0deg)'; }}
+          >
             {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
           </button>
           <button onClick={() => navigate('/login')} style={{
-            padding: '9px 20px', borderRadius: '10px', fontSize: '13px', fontWeight: 700,
-            background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
-            color: '#fff', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'background 0.2s',
-          }}>
-            Se connecter
+            padding: '10px 24px', borderRadius: '10px', fontSize: '13px', fontWeight: 800,
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02))',
+            border: '1px solid rgba(255,255,255,0.15)', backdropFilter: 'blur(10px)',
+            color: '#fff', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.3s ease',
+          }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(212,175,55,0.4)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+          >
+            Se Connecter
           </button>
         </div>
       </nav>
 
-      {/* ══════════════════════════════
-          MAIN CONTENT
-          — fills remaining space between nav & footer
-      ══════════════════════════════ */}
+      {/* ── MAIN CONTENT ── */}
       <div style={{
-        position: 'relative',
-        zIndex: 10,
-        flex: 1,
-        minHeight: 0,
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        alignItems: 'center',
-        paddingLeft: '40px',
-        paddingRight: '40px',
-        paddingBottom: '56px', /* don't underlap footer */
+        position: 'relative', zIndex: 10, flex: 1, minHeight: 0,
+        display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', alignItems: 'center',
+        padding: '0 5vw 60px', gap: '32px',
       }}>
 
-        {/* LEFT col */}
-        <div style={{
-          paddingRight: '24px',
-          opacity: ready ? 1 : 0,
-          transform: ready ? 'translateY(0)' : 'translateY(20px)',
-          transition: 'all 0.9s cubic-bezier(0.2,1,0.3,1) 0.1s',
-        }}>
+        {/* LEFT */}
+        <div style={{ perspective: '600px' }}>
 
           {/* Badge */}
           <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: '7px',
-            background: 'rgba(123,179,66,0.1)', border: '1px solid rgba(123,179,66,0.22)',
-            padding: '6px 13px', borderRadius: '100px', marginBottom: '26px',
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
+            background: 'linear-gradient(90deg, rgba(212,175,55,0.1), transparent)',
+            border: '1px solid rgba(212,175,55,0.3)', borderLeft: '3px solid #d4af37',
+            padding: '6px 14px', borderRadius: '4px', marginBottom: '20px',
+            opacity: ready ? 1 : 0,
+            transform: ready ? 'translateX(0)' : 'translateX(-30px)',
+            transition: 'all 0.6s cubic-bezier(0.2,1,0.3,1) 0.1s',
           }}>
-            <Sparkles size={12} color="#7BB342" />
-            <span style={{ fontSize: '10px', fontWeight: 800, color: '#7BB342', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-              Plateforme Officielle · ISTA Marrakech
+            <Star size={12} color="#d4af37" />
+            <span style={{ fontSize: '10px', fontWeight: 800, color: '#d4af37', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+              L'Expérience Premium ISTA
             </span>
           </div>
 
-          {/* Headline */}
+          {/* Headline — letter-by-letter */}
           <h1 style={{
-            fontSize: 'clamp(34px, 4.8vw, 80px)',
-            fontWeight: 900, lineHeight: 0.92,
-            letterSpacing: '-0.04em', margin: '0 0 22px 0',
+            fontSize: 'clamp(36px, 5vw, 76px)',
+            fontWeight: 900, lineHeight: 1.05,
+            letterSpacing: '-0.03em', margin: '0 0 18px 0',
+            textShadow: '0 20px 40px rgba(0,0,0,0.5)',
+            perspective: '400px',
           }}>
-            <span style={{ display: 'block', color: '#fff' }}>Redéfinir la</span>
-            <span style={{
-              display: 'block',
-              background: 'linear-gradient(90deg, #7BB342, #b4e07d)',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-            }}>
-              Communauté.
+            <span style={{ display: 'block', color: '#fff' }}>
+              <AnimWord text="L'Excellence" delay={0.2} />
+              {' '}
+              <AnimWord text="de" delay={0.5} />
+              {' '}
+              <AnimWord text="la" delay={0.6} />
+            </span>
+            <span style={{ display: 'block' }}>
+              {lettersDone ? (
+                <span style={{
+                  background: 'linear-gradient(90deg, #d4af37, #f9e596, #d4af37, #b28d22)',
+                  backgroundSize: '200% auto',
+                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                  animation: 'textShimmer 3s linear infinite',
+                  filter: 'drop-shadow(0 0 20px rgba(212,175,55,0.25))',
+                  display: 'inline-block',
+                }}>
+                  Communauté.
+                </span>
+              ) : (
+                <span style={{ color: '#d4af37', display: 'inline-block' }}>
+                  <AnimWord text="Communauté." delay={0.75} />
+                </span>
+              )}
             </span>
           </h1>
 
-          {/* Sub */}
+          {/* Sub — fade + slide up */}
           <p style={{
-            fontSize: 'clamp(12px, 1.05vw, 15px)',
-            color: 'rgba(255,255,255,0.46)', lineHeight: 1.65,
-            maxWidth: '400px', margin: '0 0 32px 0',
+            fontSize: 'clamp(13px, 1.1vw, 16px)',
+            color: 'rgba(255,255,255,0.58)', lineHeight: 1.75,
+            maxWidth: '440px', margin: '0 0 28px 0', fontWeight: 400,
+            opacity: ready ? 1 : 0,
+            transform: ready ? 'translateY(0)' : 'translateY(20px)',
+            transition: 'all 0.8s cubic-bezier(0.2,1,0.3,1) 0.9s',
           }}>
-            Connectez-vous avec vos pairs, partagez vos connaissances et explorez les opportunités au sein de l'écosystème ISTA.
+            Un espace exclusif conçu pour les esprits brillants. Partagez, innovez et élevez votre parcours académique au sein du réseau d'élite de l'ISTA Marrakech.
           </p>
 
-          {/* CTA */}
+          {/* CTA — pop in */}
           <button
             onClick={() => navigate('/register')}
             style={{
-              display: 'inline-flex', alignItems: 'center', gap: '8px',
-              padding: '13px 28px', borderRadius: '12px', fontSize: '13px', fontWeight: 800,
-              background: '#7BB342', color: '#fff', border: 'none', cursor: 'pointer',
-              boxShadow: '0 14px 32px -8px rgba(123,179,66,0.45)', transition: 'all 0.25s',
+              display: 'inline-flex', alignItems: 'center', gap: '10px',
+              padding: '16px 36px', borderRadius: '16px', fontSize: '15px', fontWeight: 900,
+              background: 'linear-gradient(135deg, #d4af37, #f9e596, #b28d22)', backgroundSize: '200% auto',
+              color: '#0a120c', textTransform: 'uppercase', letterSpacing: '0.05em',
+              border: 'none', cursor: 'pointer', overflow: 'hidden', position: 'relative',
+              boxShadow: '0 16px 36px -10px rgba(212,175,55,0.5), inset 0 2px 0 rgba(255,255,255,0.4)',
+              transition: 'all 0.3s cubic-bezier(0.2,1,0.3,1)',
+              opacity: ready ? 1 : 0,
+              transform: ready ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.95)',
+              transitionDelay: '1.05s',
+              animation: 'textShimmer 3s linear infinite',
             }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 20px 40px -10px rgba(123,179,66,0.6)'; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 14px 32px -8px rgba(123,179,66,0.45)'; }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px) scale(1.05)'; e.currentTarget.style.boxShadow = '0 24px 44px -12px rgba(212,175,55,0.8), 0 0 30px rgba(212,175,55,0.4)'; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0) scale(1)'; e.currentTarget.style.boxShadow = '0 16px 36px -10px rgba(212,175,55,0.5), inset 0 2px 0 rgba(255,255,255,0.4)'; }}
           >
-            Commencer l'aventure <ArrowRight size={15} />
+            <span style={{ position: 'relative', zIndex: 2 }}>Rejoindre l'Élite</span>
+            <ArrowRight size={18} style={{ position: 'relative', zIndex: 2 }} />
+            <div style={{
+              position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent)',
+              transform: 'translateX(-100%)', animation: 'shimmer 2.5s infinite',
+            }} />
           </button>
 
-          {/* Stats */}
-          <div style={{
-            display: 'flex', gap: '32px', marginTop: '40px',
-            opacity: ready ? 1 : 0, transition: 'opacity 1s ease 0.7s',
-          }}>
-            {[{ val: '1.2k+', label: 'Étudiants' }, { val: '45+', label: 'Formateurs' }, { val: '12', label: 'Spécialités' }].map((s) => (
-              <div key={s.label}>
-                <div style={{ fontSize: '20px', fontWeight: 900, color: '#fff', letterSpacing: '-0.5px' }}>{s.val}</div>
-                <div style={{ fontSize: '9px', fontWeight: 800, color: 'rgba(255,255,255,0.28)', textTransform: 'uppercase', letterSpacing: '0.12em', marginTop: '3px' }}>{s.label}</div>
+          {/* Stats — stagger in */}
+          <div style={{ display: 'flex', gap: '40px', margin: '28px 0 0 0' }}>
+            {[
+              { target: 1.5, decimals: 1, suffix: 'k+', label: 'Membres Actifs', d: 1.15 },
+              { target: 500, decimals: 0, suffix: '+',  label: 'Projets Réalisés', d: 1.25 },
+              { isStatic: true, val: '24/7', label: 'Accès Réseau', d: 1.35 },
+            ].map((s) => (
+              <div key={s.label} style={{
+                position: 'relative',
+                opacity: ready ? 1 : 0,
+                transform: ready ? 'translateY(0)' : 'translateY(16px)',
+                transition: `opacity 0.6s ease ${s.d}s, transform 0.6s cubic-bezier(0.2,1,0.3,1) ${s.d}s`,
+              }}>
+                <div style={{ position: 'absolute', left: '-10px', top: '4px', width: '2px', height: '80%', background: 'linear-gradient(to bottom, #d4af37, transparent)' }} />
+                <div style={{ fontSize: '22px', fontWeight: 900, color: '#fff', letterSpacing: '-0.5px' }}>
+                  {s.isStatic ? s.val : <AnimatedCounter target={s.target} decimals={s.decimals} suffix={s.suffix} startAnim={ready} duration={2500} />}
+                </div>
+                <div style={{ fontSize: '9px', fontWeight: 800, color: 'rgba(212,175,55,0.75)', textTransform: 'uppercase', letterSpacing: '0.15em', marginTop: '3px' }}>{s.label}</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* RIGHT col */}
+        {/* RIGHT */}
         <div style={{
-          position: 'relative',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100%',
-          opacity: ready ? 1 : 0,
-          transform: ready ? 'scale(1)' : 'scale(0.94)',
-          transition: 'all 1.1s cubic-bezier(0.16,1,0.3,1) 0.35s',
+          position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          height: '100%', perspective: '1000px',
+          opacity: ready ? 1 : 0, transform: ready ? 'scale(1) translateY(0)' : 'scale(0.88) translateY(30px)',
+          transition: 'all 1.1s cubic-bezier(0.16,1,0.3,1) 0.5s',
         }}>
 
-          {/* Card */}
+          {/* Glass Card */}
           <div style={{
-            width: '100%', maxWidth: '340px',
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.09)',
-            borderRadius: '22px', padding: '18px',
-            backdropFilter: 'blur(20px)',
-            boxShadow: '0 40px 70px -20px rgba(0,0,0,0.6)',
+            width: '100%', maxWidth: '400px',
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 100%)',
+            border: '1px solid rgba(212,175,55,0.3)', borderRadius: '24px', padding: '24px',
+            backdropFilter: 'blur(30px)',
+            boxShadow: '0 40px 80px -20px rgba(0,0,0,0.8), inset 0 0 20px rgba(212,175,55,0.08), inset 0 1px 0 rgba(255,255,255,0.2)',
             position: 'relative', zIndex: 10,
+            transform: `rotateX(${mousePos.y * -0.6}deg) rotateY(${mousePos.x * 0.6}deg)`,
+            transition: 'transform 0.1s ease-out',
+            transformStyle: 'preserve-3d',
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', transform: 'translateZ(20px)' }}>
               <div style={{
-                width: '34px', height: '34px', borderRadius: '9px', flexShrink: 0,
-                background: '#7BB342', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontWeight: 900, fontSize: '13px', color: '#fff',
-              }}>A</div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '12px', fontWeight: 800, color: '#fff' }}>Amine Benali</div>
-                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.38)', marginTop: '1px' }}>Développement Digital · 2h ago</div>
+                width: '40px', height: '40px', borderRadius: '11px', flexShrink: 0,
+                background: 'linear-gradient(135deg, #1a3d1a, #0a120c)',
+                border: '1px solid rgba(212,175,55,0.3)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: '0 8px 16px rgba(0,0,0,0.5)',
+                fontWeight: 900, color: '#d4af37', fontSize: '14px',
+              }}>
+                SA
               </div>
-              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#7BB342', boxShadow: '0 0 6px #7BB342', flexShrink: 0 }} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: '14px', fontWeight: 800, color: '#fff', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  Salma Ammari
+                  <div style={{ width: '13px', height: '13px', background: '#d4af37', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Star size={7} color="#0a120c" />
+                  </div>
+                </div>
+                <div style={{ fontSize: '10px', color: 'rgba(212,175,55,0.7)', marginTop: '2px', fontWeight: 600 }}>Développement Digital · À l'instant</div>
+              </div>
             </div>
 
-            <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.58)', lineHeight: 1.6, margin: '0 0 14px 0' }}>
-              Quelqu'un a-t-il des ressources sur React &amp; Framer Motion ? Je prépare un atelier pour la semaine prochaine au Lab. 🚀
+            <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.78)', lineHeight: 1.65, margin: '0 0 16px 0', transform: 'translateZ(30px)' }}>
+              L'atelier sur l'Intelligence Artificielle de ce matin était incroyable. Quelqu'un veut collaborer sur un projet de Machine Learning ce weekend ? 🧠✨
             </p>
 
             <div style={{
-              width: '100%', height: '120px', borderRadius: '14px',
-              background: 'rgba(123,179,66,0.07)', border: '1px solid rgba(123,179,66,0.1)',
-              marginBottom: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: '100%', height: '130px', borderRadius: '14px', overflow: 'hidden',
+              background: 'linear-gradient(45deg, #0a120c, #1a3d1a)',
+              border: '1px solid rgba(212,175,55,0.15)',
+              marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              transform: 'translateZ(40px)', position: 'relative',
             }}>
-              <Sparkles size={36} color="#7BB342" style={{ opacity: 0.2 }} />
+              <div style={{ position: 'absolute', inset: 0, background: 'url("https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=600&auto=format&fit=crop") center/cover', opacity: 0.4, mixBlendMode: 'overlay' }} />
+              <Sparkles size={40} color="#d4af37" style={{ opacity: 0.8, filter: 'drop-shadow(0 0 10px rgba(212,175,55,0.5))' }} />
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: 'rgba(255,255,255,0.38)', cursor: 'pointer' }}><Heart size={13} /> 24</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: 'rgba(255,255,255,0.38)', cursor: 'pointer' }}><MessageCircle size={13} /> 8</div>
-              <div style={{ marginLeft: 'auto', cursor: 'pointer' }}><Share2 size={13} color="rgba(255,255,255,0.25)" /></div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', transform: 'translateZ(20px)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: 700, color: '#d4af37', cursor: 'pointer', background: 'rgba(212,175,55,0.1)', padding: '5px 10px', borderRadius: '7px' }}>
+                <Heart size={13} fill="#d4af37" /> 142
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.55)', cursor: 'pointer', transition: 'color 0.2s' }}
+                onMouseEnter={e => e.currentTarget.style.color = '#fff'}
+                onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.55)'}
+              >
+                <MessageCircle size={13} /> 38
+              </div>
+              <div style={{ marginLeft: 'auto', cursor: 'pointer', color: 'rgba(255,255,255,0.35)', transition: 'color 0.2s' }}
+                onMouseEnter={e => e.currentTarget.style.color = '#fff'}
+                onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.35)'}
+              >
+                <Share2 size={13} />
+              </div>
             </div>
           </div>
 
-          {/* Chip top-right — inset so it doesn't escape the column */}
+          {/* Chip 1 */}
           <div style={{
-            position: 'absolute', top: '22%', right: '4px', zIndex: 20,
-            padding: '9px 14px',
-            background: 'rgba(123,179,66,0.15)', border: '1px solid rgba(123,179,66,0.3)',
-            borderRadius: '14px', backdropFilter: 'blur(14px)',
-            animation: 'chipFloat 6s ease-in-out infinite', pointerEvents: 'none',
+            position: 'absolute', top: '12%', right: '-4%', zIndex: 20,
+            padding: '10px 16px',
+            background: 'linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.05))',
+            border: '1px solid rgba(212,175,55,0.4)', borderRadius: '14px', backdropFilter: 'blur(20px)',
+            boxShadow: '0 16px 32px rgba(0,0,0,0.4)',
+            animation: 'floatSlow 7s ease-in-out infinite',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', whiteSpace: 'nowrap' }}>
+              <div style={{ width: '24px', height: '24px', background: 'linear-gradient(135deg, #d4af37, #b28d22)', borderRadius: '7px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(212,175,55,0.4)' }}>
+                <Clock size={12} color="#0a120c" />
+              </div>
+              <span style={{ fontSize: '12px', fontWeight: 800, color: '#fff' }}>Hackathon 2026</span>
+            </div>
+          </div>
+
+          {/* Chip 2 */}
+          <div style={{
+            position: 'absolute', bottom: '12%', left: '-8%', zIndex: 20,
+            padding: '9px 14px', background: 'rgba(10,18,12,0.65)',
+            border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', backdropFilter: 'blur(20px)',
+            boxShadow: '0 16px 32px rgba(0,0,0,0.5)',
+            animation: 'floatFast 5s ease-in-out infinite reverse',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '7px', whiteSpace: 'nowrap' }}>
-              <div style={{ width: '22px', height: '22px', background: '#7BB342', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                <Clock size={11} color="#fff" />
+              <div style={{ position: 'relative', width: '9px', height: '9px', flexShrink: 0 }}>
+                <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: '#22c55e' }} />
+                <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: '#22c55e', animation: 'ping 2s cubic-bezier(0,0,0.2,1) infinite' }} />
               </div>
-              <span style={{ fontSize: '11px', fontWeight: 700, color: '#fff' }}>Avis: Workshop React</span>
-            </div>
-          </div>
-
-          {/* Chip bottom-left */}
-          <div style={{
-            position: 'absolute', bottom: '24%', left: '4px', zIndex: 9,
-            padding: '8px 13px',
-            background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: '12px', backdropFilter: 'blur(14px)',
-            animation: 'chipFloatAlt 8s ease-in-out infinite', pointerEvents: 'none',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}>
-              <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#F43F5E', flexShrink: 0 }} />
-              <span style={{ fontSize: '10px', fontWeight: 600, color: 'rgba(255,255,255,0.52)' }}>Nouvel objet perdu</span>
+              <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>340 en ligne</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ══════════════════════════════
-          FOOTER
-      ══════════════════════════════ */}
+      {/* ── FOOTER ── */}
       <footer style={{
-        position: 'absolute', bottom: 0, left: 0, right: 0,
-        zIndex: 100, height: '56px',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        paddingLeft: '40px', paddingRight: '40px',
-        borderTop: '1px solid rgba(255,255,255,0.04)',
-        background: 'linear-gradient(to top, rgba(4,6,4,0.8), transparent)',
+        position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 100, height: '52px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 5vw',
+        borderTop: '1px solid rgba(212,175,55,0.08)',
+        background: 'linear-gradient(to top, rgba(10,18,12,0.98), transparent)',
       }}>
-        <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.18)', fontWeight: 600, letterSpacing: '0.05em' }}>
-          © 2025 ISTA CONNECT · TOUS DROITS RÉSERVÉS
+        <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.25)', fontWeight: 700, letterSpacing: '0.1em' }}>
+          © 2026 ISTA CONNECT · <span style={{ color: 'rgba(212,175,55,0.5)' }}>ÉDITION PREMIUM</span>
         </div>
-        <div style={{ display: 'flex', gap: '24px' }}>
-          {['Confidentialité', 'Conditions', 'Contact'].map((item) => (
+        <div style={{ display: 'flex', gap: '28px' }}>
+          {['Confidentialité', 'Conditions', 'Support VIP'].map((item) => (
             <span key={item}
-              style={{ fontSize: '10px', color: 'rgba(255,255,255,0.18)', cursor: 'pointer', transition: 'color 0.2s', fontWeight: 600 }}
-              onMouseEnter={e => e.currentTarget.style.color = '#7BB342'}
-              onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.18)'}
+              style={{ fontSize: '10px', color: 'rgba(255,255,255,0.35)', cursor: 'pointer', transition: 'all 0.3s', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}
+              onMouseEnter={e => { e.currentTarget.style.color = '#d4af37'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+              onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.35)'; e.currentTarget.style.transform = 'translateY(0)'; }}
             >{item}</span>
           ))}
         </div>
       </footer>
 
       <style>{`
-        @keyframes chipFloat {
-          0%,100% { transform: translateY(0) rotate(0deg); }
-          50% { transform: translateY(-12px) rotate(1deg); }
+        @keyframes floatSlow {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          50% { transform: translateY(-16px) rotate(1.5deg); }
         }
-        @keyframes chipFloatAlt {
-          0%,100% { transform: translateY(0); }
-          50% { transform: translateY(9px); }
+        @keyframes floatFast {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          50% { transform: translateY(-12px) rotate(-1.5deg); }
+        }
+        @keyframes shimmer {
+          100% { transform: translateX(200%); }
+        }
+        @keyframes ping {
+          75%, 100% { transform: scale(2.5); opacity: 0; }
+        }
+        @keyframes textShimmer {
+          0% { background-position: 0% center; }
+          100% { background-position: 200% center; }
         }
       `}</style>
     </div>

@@ -3,7 +3,7 @@ import { useAuth } from '../../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import {
   LayoutDashboard, Users, FileText, Search,
-  MessageSquare, Settings, Bell, FolderOpen, LogOut, ChevronRight, ChevronLeft
+  MessageSquare, Settings, Bell, FolderOpen, LogOut, ChevronRight, ChevronLeft, Sparkles
 } from 'lucide-react';
 import { useTheme } from '../../../context/ThemeContext';
 import BrandLogo from '../common/BrandLogo';
@@ -97,7 +97,8 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
           </div>
 
           {!isCollapsed && (
-            <div style={{ opacity: 1, transition: 'opacity 0.3s' }}>
+            <div style={{ opacity: 1, transition: 'opacity 0.3s', position: 'relative' }}>
+              <Sparkles size={12} color="var(--accent-gold)" style={{ position: 'absolute', top: -8, left: -14, animation: 'pulse 2s infinite' }} />
               <h2 style={{
                 fontSize: '18px', fontWeight: 900, color: T_COLORS.text1,
                 letterSpacing: '-0.5px', margin: 0, lineHeight: 1.1
@@ -110,6 +111,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
               }}>
                 Mission Control
               </p>
+              <Sparkles size={10} color="var(--brand)" style={{ position: 'absolute', bottom: -6, right: -12, animation: 'pulse 2.5s infinite reverse' }} />
             </div>
           )}
         </div>
@@ -199,25 +201,25 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
 
       {/* ── Footer Section ── */}
       <div style={{ padding: '24px 14px', borderTop: `1px solid ${T_COLORS.border}`, background: 'var(--sidebar-footer-bg)' }}>
-        <div className="pro-card" style={{
-          display: 'flex', alignItems: 'center',
-          gap: isCollapsed ? '0' : '14px',
-          padding: isCollapsed ? '8px' : '14px',
+        <div className={`pro-card ${isCollapsed ? 'flex flex-col' : 'flex'}`} style={{
+          alignItems: 'center',
+          gap: isCollapsed ? '12px' : '14px',
+          padding: isCollapsed ? '12px 8px' : '14px',
           borderRadius: '16px',
           border: '1px solid rgba(255,255,255,0.03)',
           justifyContent: isCollapsed ? 'center' : 'flex-start'
         }}>
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative', flexShrink: 0 }}>
             <img
               src={user?.avatar || 'https://i.pravatar.cc/100?img=68'}
               alt="avatar"
               style={{
-                width: '40px', height: '40px', borderRadius: '12px',
+                width: isCollapsed ? '36px' : '40px', height: isCollapsed ? '36px' : '40px', borderRadius: '12px',
                 objectFit: 'cover', border: `1px solid ${T_COLORS.border}`
               }}
             />
           </div>
-          {!isCollapsed && (
+          {!isCollapsed ? (
             <div style={{ flex: 1, minWidth: 0 }}>
               <p style={{
                 fontSize: '14px', fontWeight: 800, color: T_COLORS.text1,
@@ -236,6 +238,21 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
                 <LogOut size={10} /> {t('nav.logout')}
               </button>
             </div>
+          ) : (
+            <button
+              onClick={async () => { await logout(); navigate('/login'); }}
+              style={{
+                background: 'rgba(244, 63, 94, 0.1)', border: 'none', cursor: 'pointer',
+                width: '32px', height: '32px', borderRadius: '10px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: '#F43F5E', transition: 'all 0.2s'
+              }}
+              title={t('nav.logout')}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(244, 63, 94, 0.2)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'rgba(244, 63, 94, 0.1)'}
+            >
+              <LogOut size={16} />
+            </button>
           )}
         </div>
       </div>

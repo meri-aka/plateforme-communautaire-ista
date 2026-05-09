@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
@@ -89,6 +90,7 @@ class AuthController extends Controller
         $validated = $request->validate([
             'bio'        => 'sometimes|nullable|string',
             'filiere_id' => 'sometimes|nullable|exists:filieres,id',
+            'name'       => 'sometimes|string|max:100',
         ]);
 
         $user->update($validated);
@@ -96,6 +98,30 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Profile updated.',
             'user'    => $user->fresh()->load('filiere'),
+        ]);
+    }
+
+    public function uploadAvatar(Request $request)
+    {
+        $request->validate([
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
+        $user = $request->user();
+
+        // Delete old avatar file if it exists and is locally stored
+        if ($user->avatar && str_starts_with($user->avatar, 'avatars/')) {
+            Storage::disk('public')->delete($user->avatar);
+        }
+
+        $path = $request->file('avatar')->store('avatars', 'public');
+
+        $user->update(['avatar' => $path]);
+
+        return response()->json([
+            'message'    => 'Avatar updated.',
+            'avatar_url' => Storage::disk('public')->url($path),
+            'user'       => $user->fresh()->load('filiere'),
         ]);
     }
 }

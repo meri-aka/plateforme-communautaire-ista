@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import Sidebar from './Sidebar';
@@ -6,8 +6,14 @@ import Navbar  from './Navbar';
 
 export default function AdminLayout({ children, title, subtitle, actions }) {
   const { user, loading } = useAuth();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    return localStorage.getItem('adminSidebarCollapsed') === 'true';
+  });
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('adminSidebarCollapsed', isCollapsed);
+  }, [isCollapsed]);
 
   if (loading)               return null;
   if (!user)                 return <Navigate to="/login"  replace />;

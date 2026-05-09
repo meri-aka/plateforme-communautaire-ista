@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import './index.css';
 
@@ -17,7 +17,6 @@ import CompleteProfilePage    from './components/user/pages/UserCompleteProfileP
 import ProtectedRoute         from './components/ProtectedRoute';
 import GroupsPage             from './components/admin/pages/GroupsPage';
 
-
 // User-facing pages
 import UserProtectedRoute from './components/user/UserProtectedRoute';
 import UserAuthPage       from './components/user/pages/UserAuthPage';
@@ -27,9 +26,18 @@ import LostFoundPage      from './components/user/pages/LostFoundPage';
 import NotificationsPage  from './components/user/pages/NotificationsPage';
 import SinglePostPage     from './components/user/pages/SinglePostPage';
 import FeedbackPageUser   from './components/user/pages/FeedbackPage';
-import MessagesPage from './components/user/pages/MessagesPage';
+import MessagesPage       from './components/user/pages/MessagesPage';
+
 // Landing
 import LandingPage from './components/LandingPage';
+
+// Smart root: logged-in users go straight to /feed, others see landing
+function RootRedirect() {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  if (user) return <Navigate to="/feed" replace />;
+  return <LandingPage />;
+}
 
 export default function App() {
   return (
@@ -37,8 +45,8 @@ export default function App() {
       <AuthProvider>
         <BrowserRouter>
           <Routes>
-            {/* Landing */}
-            <Route path="/" element={<LandingPage />} />
+            {/* Root — smart redirect */}
+            <Route path="/" element={<RootRedirect />} />
 
             {/* Public */}
             <Route path="/login"            element={<UserAuthPage />} />
@@ -57,18 +65,18 @@ export default function App() {
               <Route path="/admin/notifications" element={<AdminNotificationsPage />} />
               <Route path="/admin/logs"          element={<LogsPage />} />
               <Route path="/admin/reports"       element={<ReportsPage />} />
-              <Route path="/admin/groups" element={<GroupsPage />} />
+              <Route path="/admin/groups"        element={<GroupsPage />} />
             </Route>
 
             {/* ── User-facing routes ── */}
             <Route element={<UserProtectedRoute />}>
-              <Route path="/feed"          element={<FeedPage />} />
-              <Route path="/posts/:id"     element={<SinglePostPage />} />
-              <Route path="/profile"       element={<ProfilePage />} />
-              <Route path="/profile/:id"   element={<ProfilePage />} />
-              <Route path="/lost-found"    element={<LostFoundPage />} />
-              <Route path="/notifications" element={<NotificationsPage />} />
-              <Route path="/feedback"      element={<FeedbackPageUser />} />
+              <Route path="/feed"              element={<FeedPage />} />
+              <Route path="/posts/:id"         element={<SinglePostPage />} />
+              <Route path="/profile"           element={<ProfilePage />} />
+              <Route path="/profile/:id"       element={<ProfilePage />} />
+              <Route path="/lost-found"        element={<LostFoundPage />} />
+              <Route path="/notifications"     element={<NotificationsPage />} />
+              <Route path="/feedback"          element={<FeedbackPageUser />} />
               <Route path="/messages"          element={<MessagesPage />} />
               <Route path="/messages/:userId"  element={<MessagesPage />} />
             </Route>
