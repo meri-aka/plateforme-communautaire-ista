@@ -1,0 +1,306 @@
+{
+  "nav": {
+    "overview": "Overview",
+    "users": "User Directory",
+    "posts": "Post Review",
+    "lost_found": "Lost & Found",
+    "feedback": "Feedback Hub",
+    "settings": "Global Settings",
+    "dispatch": "Dispatch Center",
+    "logs": "Diagnostic Logs",
+    "logout": "Logout",
+    "collapse": "Collapse Menu",
+    "expand": "Expand Menu",
+    "admin": "Admin",
+    "groups": "Groups"
+  },
+  "sections": {
+    "analytics": "Analytics & Moderation",
+    "services": "Services",
+    "system": "System Infrastructure"
+  },
+  "login": {
+    "node_access": "Strategic Node Access",
+    "terminal_live": "Terminal Live",
+    "hero_title": "The definitive command interface for ISTA community operations.",
+    "hero_subtitle": "Real-time synchronization across distributed digital nodes.",
+    "init_ops": "Initialize Ops",
+    "return_node": "Return to Node",
+    "authorize": "Authorize",
+    "handshake": "Awaiting identity handshake...",
+    "alias": "Identity Alias",
+    "passkey": "Passkey Hash",
+    "persistent": "Persistent Uplink",
+    "recovery": "Hash Recovery?",
+    "secure_auth": "Secure Authorize",
+    "syncing": "Synchronizing...",
+    "credentials": "Operational Credentials",
+    "error_mismatch": "CRITICAL: AUTH_SYNC_FAILURE. Credential hash mismatch.",
+    "sidebar_title": "Strategic Access Terminal",
+    "sidebar_desc": "Providing identity synthesis for ISTA Connect governance layer.",
+    "forgot_password": "Forgot Password?",
+    "reset_password": "Reset Password",
+    "enter_email_reset": "Enter your email to receive a reset link.",
+    "reset_sent": "A password reset link has been sent to your email.",
+    "send_link": "Send Reset Link",
+    "sending": "Sending...",
+    "back_to_login": "Back to login"
+  },
+  "dashboard": {
+    "title": "Analytical Overwatch",
+    "subtitle": "Operational performance and node synchronization",
+    "actions": {
+      "cycle": "Standard Cycle",
+      "export": "Export Dataset"
+    },
+    "node_users": "Active Node Users",
+    "throughput": "Content Throughput",
+    "signal": "Signal Quality",
+    "intelligence": "Intelligence Feed",
+    "success_rate": "Success Rate",
+    "search_placeholder": "Search nodes...",
+    "charts": {
+      "activity_title": "Cluster Activity Stream",
+      "activity_desc": "Real-time user synchronization across node clusters",
+      "distribution_title": "Node Distribution",
+      "active_nodes": "Active Nodes",
+      "live": "LIVE",
+      "tfh": "24H",
+      "ready": "READY",
+      "clusters": {
+        "digital": "Digital Development",
+        "infra": "Digital Infrastructure",
+        "ai": "Artificial Intelligence"
+      },
+      "status": {
+        "optimal": "OPTIMAL",
+        "stable": "STABLE",
+        "syncing": "SYNCING"
+      }
+    },
+    "logs": {
+      "title": "System Integrity Log",
+      "view_history": "View Historical Data",
+      "suspend": "Suspend Stream",
+      "initial": "Resume Stream",
+      "archive": "Archive Logs",
+      "filter_level": "Level",
+      "filter_module": "Module: All"
+    },
+    "mock_logs": {
+      "identity": "New secure identity provisioned for node ISTA-04",
+      "flagged": "Content auto-hidden: flagged by threshold (Thread #842)",
+      "db_sync": "Database synchronization complete - nodes synced: 14"
+    }
+  },
+  "users": {
+    "subtitle": "Organize, moderate, and manage platform members",
+    "stats": {
+      "total": "Total Members",
+      "verified": "Verified",
+      "pending": "Pending",
+      "restricted": "Restricted"
+    },
+    "actions": {
+      "export": "Export Data",
+      "invite": "Invite Member"
+    },
+    "table": {
+      "search": "Search by name, email...",
+      "status_filter": "Status: All",
+      "header_details": "User Details",
+      "header_access": "Access Level",
+      "header_status": "Status",
+      "header_actions": "Actions"
+    },
+    "status": {
+      "active": "Active",
+      "banned": "Banned",
+      "inactive": "Inactive"
+    },
+    "roles": {
+      "admin": "Admin",
+      "trainee": "Trainee",
+      "trainer": "Trainer"
+    },
+    "fields": {
+      "dev": "Digital Development",
+      "infra": "Digital Infrastructure",
+      "ai": "Artificial Intelligence",
+      "general": "General"
+    },
+    "levels": {
+      "y1": "1st Year",
+      "y2": "2nd Year"
+    }
+  },
+  "posts": {
+    "subtitle": "Review and moderate community content signals",
+    "table": {
+      "search": "Search reports...",
+      "header_details": "Post Details",
+      "header_metrics": "Metrics",
+      "header_actions": "Actions"
+    },
+    "mock": {
+      "p1": "Modern React Patterns",
+      "p2": "AI in Infrastructure",
+      "p3": "Hidden Exam Answers"
+    }
+  },
+  "lost_found": {
+    "title": "Asset Recovery Hub",
+    "subtitle": "Coordinating the return of lost items within the ecosystem",
+    "register": "Register Item",
+    "search": "Search reports...",
+    "categories": "Categories",
+    "hero": {
+      "title": "Asset Recovery",
+      "desc": "Successful returns optimized for community node ISTA.",
+      "success": "success"
+    },
+    "details": {
+      "coordinates": "Coordinates",
+      "cataloged": "Cataloged"
+    },
+    "actions": {
+      "resolve": "Resolve",
+      "contact": "Contact"
+    },
+    "types": {
+      "lost": "Lost",
+      "found": "Found"
+    },
+    "categories_list": {
+      "tech": "Tech",
+      "labs": "Labs",
+      "library": "Library",
+      "admin": "Admin",
+      "electronics": "Electronics",
+      "accessories": "Accessories",
+      "personal": "Personal"
+    },
+    "mock": {
+      "item1": "MacBook Pro 14\"",
+      "item2": "iPhone 13 Case",
+      "item3": "Leather Wallet",
+      "item4": "AirPods Pro",
+      "loc1": "Lab 4",
+      "loc2": "Cafeteria",
+      "loc3": "Library",
+      "loc4": "Room 201"
+    }
+  },
+  "feedback": {
+    "title": "Intelligence Hub",
+    "subtitle": "Gathering user insights and platform health signals",
+    "metrics": {
+      "volume": "Total Volume",
+      "active": "Active Issues",
+      "score": "Average Score",
+      "rate": "Resolution Rate"
+    },
+    "search": "Search reports...",
+    "reply": "Reply",
+    "cancel": "Cancel",
+    "resolve": "Resolve",
+    "dispatch": "Dispatch Reply",
+    "placeholder": "Type your response...",
+    "categories": {
+      "experience": "Experience",
+      "bug": "Bug Report"
+    },
+    "mock": {
+      "c1": "Excellent module, explanations are very clear!",
+      "c2": "The lost items page does not load on mobile devices."
+    }
+  },
+  "settings": {
+    "subtitle": "Configuring the orbital parameters of the ISTA ecosystem",
+    "tabs": {
+      "core": "Core Config",
+      "security": "Security",
+      "notifications": "Alerts",
+      "database": "Data Hub"
+    },
+    "sections": {
+      "identity": "Platform Identity",
+      "localization": "Localization",
+      "security": "Defense & Access",
+      "alerts": "Alert Channels",
+      "database": "Data Integrity"
+    },
+    "fields": {
+      "alias": "Global Alias",
+      "env": "Environment",
+      "url": "Gateway URL",
+      "email": "System Email",
+      "lang": "Primary Language",
+      "tz": "System Timezone"
+    },
+    "danger": {
+      "title": "Danger Zone",
+      "desc": "These operations are IRREVERSIBLE. Ensure you have backups.",
+      "wipe": "Wipe Database",
+      "revoke": "Revoke All Tokens"
+    }
+  },
+  "notifications": {
+    "subtitle": "Real-time situational awareness and system signals",
+    "sync_all": "Synchronize All",
+    "purge": "Purge Archive",
+    "streams": "Signal Streams",
+    "status": {
+      "all": "All Artifacts",
+      "unread": "Unread Only",
+      "read": "Archived"
+    },
+    "empty": {
+      "title": "Terminal Quiet",
+      "desc": "No incoming signals detected."
+    },
+    "mock": {
+      "t1": "Critical Content Flag",
+      "t2": "New Platform Joiner",
+      "t3": "Intelligence Signal",
+      "t4": "Asset Recovery Update",
+      "b1": "Karim M. — \"Suspicious exam solutions\" reached report threshold.",
+      "b2": "Ahmed El Mansouri initialized their profile (Dev Digital).",
+      "b3": "Negative sentiment detected in recent feedback.",
+      "b4": "Sara A. logged a high-value asset report: MacBook Pro 14\"."
+    }
+  },
+  "common": {
+    "export": "Export Data",
+    "sync": "Sync",
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "status_ready": "SYSTEM_STATUS::READY",
+    "view_all": "View All",
+    "on": "on",
+    "details": "Details",
+    "delete": "Delete",
+    "time": {
+      "now": "Just now",
+      "m": "{{count}}m ago",
+      "h": "{{count}}h ago",
+      "d": "{{count}}d ago",
+      "yesterday": "Yesterday"
+    }
+  },
+  "logs": {
+    "filter": "Filter traces...",
+    "stats": {
+      "throughput": "Event Throughput",
+      "errors": "Critical Errors",
+      "health": "Service Health",
+      "alerts": "Active Alerts"
+    },
+    "mock": {
+      "a1": "Database connection timeout after 30s",
+      "a2": "Content auto-hidden: flagged by threshold (Thread #842)",
+      "a3": "User access revoked for policy violation",
+      "a4": "New secure identity provisioned for node ISTA-04"
+    }
+  }
+}
